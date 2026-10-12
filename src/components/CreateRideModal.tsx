@@ -41,9 +41,11 @@ export default function CreateRideModal({
   const [category, setCategory] = useState<'general' | 'exam'>('general');
   const [origin, setOrigin] = useState('');
   const [destination, setDestination] = useState('');
-  const [departureDate, setDepartureDate] = useState(
-    new Date().toISOString().split('T')[0]
-  );
+  const [departureDate, setDepartureDate] = useState('2026-10-12');
+
+  React.useEffect(() => {
+    setDepartureDate(new Date().toISOString().split('T')[0]);
+  }, []);
   const [departureTime, setDepartureTime] = useState('08:30');
   const [transportMode, setTransportMode] = useState<TransportMode>('cab');
   const [vehicleType, setVehicleType] = useState('Uber Auto (3 seats)');

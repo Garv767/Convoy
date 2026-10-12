@@ -81,7 +81,7 @@ export default function MyRidesView({
                           <span className="text-sm font-semibold text-text">
                             {req.passenger_name}
                           </span>
-                          <ShieldCheck className="w-4 h-4 text-green" title="Verified SRM Student" />
+                          <ShieldCheck className="w-4 h-4 text-green"  />
                         </div>
                         <p className="text-xs text-muted font-mono">
                           {req.passenger_gender.toUpperCase()} · {req.passenger_department}
