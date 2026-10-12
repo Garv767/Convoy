@@ -1,5 +1,6 @@
 import React from 'react';
-import { ShieldCheck, Plus, Car, GraduationCap, Users, Compass } from 'lucide-react';
+import { ShieldCheck, Plus, Car, GraduationCap, Users, Compass, LogIn, LogOut } from 'lucide-react';
+import Link from 'next/link';
 import { UserProfile } from '../types';
 
 interface NavbarProps {
@@ -7,6 +8,7 @@ interface NavbarProps {
   setActiveTab: (tab: 'all' | 'exam' | 'my-rides') => void;
   onOpenCreateModal: () => void;
   user: UserProfile | null;
+  onSignOut: () => void;
 }
 
 export default function Navbar({
@@ -14,6 +16,7 @@ export default function Navbar({
   setActiveTab,
   onOpenCreateModal,
   user,
+  onSignOut,
 }: NavbarProps) {
   return (
     <header className="sticky top-0 z-40 bg-surface/80 backdrop-blur-md border-b border-border">
@@ -87,19 +90,28 @@ export default function Navbar({
               <span className="hidden xs:inline">Post Ride</span>
             </button>
 
-            {user && (
-              <div className="hidden md:flex items-center gap-2 pl-3 border-l border-border text-xs">
-                <div className="flex flex-col text-right">
+            {user ? (
+              <div className="flex items-center gap-2 pl-2 border-l border-border text-xs">
+                <div className="hidden md:flex flex-col text-right">
                   <span className="font-medium text-text">{user.full_name}</span>
                   <span className="text-muted font-mono">{user.user_net_id}@srmist.edu.in</span>
                 </div>
-                <div
-                  className="w-7 h-7 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center text-accent"
-                  title="Verified SRM Student"
+                <button
+                  onClick={onSignOut}
+                  title="Sign Out"
+                  className="p-1.5 rounded-lg text-muted hover:text-red hover:bg-surface2 transition-colors"
                 >
-                  <ShieldCheck className="w-4 h-4 text-green" />
-                </div>
+                  <LogOut className="w-4 h-4" />
+                </button>
               </div>
+            ) : (
+              <Link
+                href="/login"
+                className="btn-secondary text-xs py-1.5 px-3 gap-1.5 flex items-center"
+              >
+                <LogIn className="w-3.5 h-3.5 text-accent" />
+                <span>Sign In</span>
+              </Link>
             )}
           </div>
         </div>

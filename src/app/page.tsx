@@ -1,13 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Navbar from '../components/Navbar';
 import RideCard from '../components/RideCard';
 import CreateRideModal from '../components/CreateRideModal';
 import JoinRequestModal from '../components/JoinRequestModal';
 import MyRidesView from '../components/MyRidesView';
 import ExamTransitBanner from '../components/ExamTransitBanner';
-import TransportBadge from '../components/TransportBadge';
+import ProfileModal from '../components/ProfileModal';
 import {
   RideListing,
   RideRequest,
@@ -17,26 +19,48 @@ import {
   ExamSession,
   UnlockedContact,
 } from '../types';
-import { INITIAL_RIDES, INITIAL_REQUESTS, INITIAL_USER } from '../lib/mockData';
+import {
+  fetchLiveRides,
+  fetchUserProfile,
+  saveUserProfile,
+  createLiveRide,
+  submitLiveRequest,
+  fetchIncomingRequests,
+  fetchOutgoingRequests,
+  updateRequestStatus,
+  fetchRideContacts,
+} from '../lib/api';
+import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import {
   Search,
-  Filter,
   Plus,
   Bus,
   TrainFront,
   CarTaxiFront,
   Bike,
-  Sparkles,
   ShieldCheck,
   GraduationCap,
   Users,
+  RefreshCw,
+  AlertCircle,
+  KeyRound,
 } from 'lucide-react';
 
 export default function Home() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'all' | 'exam' | 'my-rides'>('all');
-  const [currentUser, setCurrentUser] = useState<UserProfile>(INITIAL_USER);
-  const [rides, setRides] = useState<RideListing[]>(INITIAL_RIDES);
-  const [requests, setRequests] = useState<RideRequest[]>(INITIAL_REQUESTS);
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
+  const [userEmail, setUserEmail] = useState<string>('');
+  const [userId, setUserId] = useState<string>('');
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+
+  // Live DB State
+  const [rides, setRides] = useState<RideListing[]>([]);
+  const [requests, setRequests] = useState<RideRequest[]>([]);
+  const [unlockedContactsMap, setUnlockedContactsMap] = useState<Record<string, UnlockedContact[]>>({});
+  const [loadingRides, setLoadingRides] = useState(true);
+  const [loadingRequests, setLoadingRequests] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Search & Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -51,116 +75,197 @@ export default function Home() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedRideForJoin, setSelectedRideForJoin] = useState<RideListing | null>(null);
 
-  // Load from localStorage if present
+  // 1. Auth Listener: Check Supabase session
   useEffect(() => {
-    try {
-      const savedRides = localStorage.getItem('convoy_rides');
-      if (savedRides) setRides(JSON.parse(savedRides));
+    async function checkAuth() {
+      if (!isSupabaseConfigured) return;
 
-      const savedRequests = localStorage.getItem('convoy_requests');
-      if (savedRequests) setRequests(JSON.parse(savedRequests));
-    } catch {
-      // Fallback to initial
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        const email = session.user.email || '';
+        const uid = session.user.id;
+        setUserEmail(email);
+        setUserId(uid);
+
+        const profile = await fetchUserProfile(uid);
+        if (profile) {
+          setCurrentUser(profile);
+        } else {
+          // Open profile completion modal
+          setIsProfileModalOpen(true);
+        }
+      }
     }
+
+    checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        const email = session.user.email || '';
+        const uid = session.user.id;
+        setUserEmail(email);
+        setUserId(uid);
+
+        const profile = await fetchUserProfile(uid);
+        if (profile) {
+          setCurrentUser(profile);
+          setIsProfileModalOpen(false);
+        } else {
+          setIsProfileModalOpen(true);
+        }
+      } else {
+        setCurrentUser(null);
+        setUserEmail('');
+        setUserId('');
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
-  // Sync to localStorage
-  const saveRidesState = (updated: RideListing[]) => {
-    setRides(updated);
-    try {
-      localStorage.setItem('convoy_rides', JSON.stringify(updated));
-    } catch {}
+  // 2. Load live rides from Supabase
+  const loadRides = useCallback(async () => {
+    setLoadingRides(true);
+    setErrorMsg(null);
+    const { data, error } = await fetchLiveRides();
+    if (error) setErrorMsg(error);
+    setRides(data);
+    setLoadingRides(false);
+  }, []);
+
+  useEffect(() => {
+    loadRides();
+  }, [loadRides]);
+
+  // 3. Load requests for My Activity
+  const loadRequests = useCallback(async () => {
+    if (!currentUser) return;
+    setLoadingRequests(true);
+    const [incoming, outgoing] = await Promise.all([
+      fetchIncomingRequests(currentUser.id),
+      fetchOutgoingRequests(currentUser.id),
+    ]);
+    setRequests([...incoming, ...outgoing]);
+    setLoadingRequests(false);
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (activeTab === 'my-rides' && currentUser) {
+      loadRequests();
+    }
+  }, [activeTab, currentUser, loadRequests]);
+
+  // Save new user profile from modal
+  const handleSaveProfile = async (profileData: UserProfile) => {
+    const res = await saveUserProfile(profileData);
+    if (res.success) {
+      setCurrentUser(profileData);
+      setIsProfileModalOpen(false);
+    } else {
+      alert('Failed to save profile: ' + res.error);
+    }
   };
 
-  const saveRequestsState = (updated: RideRequest[]) => {
-    setRequests(updated);
-    try {
-      localStorage.setItem('convoy_requests', JSON.stringify(updated));
-    } catch {}
+  // Sign out
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setCurrentUser(null);
+    setUserEmail('');
+    setUserId('');
   };
 
-  // Create Ride
-  const handleCreateRide = (
-    newRideData: Omit<RideListing, 'id' | 'created_at' | 'status'>
-  ) => {
-    const newRide: RideListing = {
+  // Create Ride (Live DB Insert)
+  const handleCreateRide = async (newRideData: any) => {
+    if (!currentUser) {
+      router.push('/login');
+      return;
+    }
+
+    const res = await createLiveRide({
       ...newRideData,
-      id: `ride_${Date.now()}`,
-      status: 'active',
-      created_at: new Date().toISOString(),
-    };
-    const updated = [newRide, ...rides];
-    saveRidesState(updated);
+      host_id: currentUser.id,
+    });
+
+    if (res.success) {
+      await loadRides();
+      setActiveTab(newRideData.ride_category === 'exam' ? 'exam' : 'all');
+    } else {
+      alert('Could not publish ride: ' + res.error);
+    }
   };
 
-  // Submit Join Request
-  const handleSubmitRequest = (
+  // Request to Join (Live DB Insert)
+  const handleSubmitRequest = async (
     rideId: string,
     seats: number,
     landmark: string,
     message: string
   ) => {
-    const newRequest: RideRequest = {
-      id: `req_${Date.now()}`,
-      ride_id: rideId,
-      passenger_id: currentUser.id,
-      passenger_net_id: currentUser.user_net_id,
-      passenger_name: currentUser.full_name,
-      passenger_gender: currentUser.gender,
-      passenger_department: currentUser.department,
-      passenger_phone: currentUser.phone_number,
-      passenger_whatsapp: currentUser.whatsapp_number,
-      seats_requested: seats,
-      pickup_landmark: landmark,
-      message,
-      status: 'pending',
-      created_at: new Date().toISOString(),
-    };
+    if (!currentUser) {
+      router.push('/login');
+      return;
+    }
 
-    const updated = [newRequest, ...requests];
-    saveRequestsState(updated);
+    const res = await submitLiveRequest({
+      rideId,
+      passengerId: currentUser.id,
+      seats,
+      landmark,
+      message,
+    });
+
+    if (res.success) {
+      alert('Request sent to host successfully!');
+      if (activeTab === 'my-rides') loadRequests();
+    } else {
+      alert('Failed to send request: ' + res.error);
+    }
   };
 
   // Accept Request (Host Action)
-  const handleAcceptRequest = (requestId: string) => {
+  const handleAcceptRequest = async (requestId: string) => {
     const req = requests.find((r) => r.id === requestId);
     if (!req) return;
 
-    // 1. Update request status to accepted
-    const updatedRequests = requests.map((r) =>
-      r.id === requestId ? { ...r, status: 'accepted' as const } : r
+    const res = await updateRequestStatus(
+      requestId,
+      req.ride_id,
+      'accepted',
+      req.seats_requested
     );
-    saveRequestsState(updatedRequests);
 
-    // 2. Decrement available seats in corresponding ride
-    const updatedRides = rides.map((ride) => {
-      if (ride.id === req.ride_id) {
-        const remaining = Math.max(0, ride.available_seats - req.seats_requested);
-        return {
-          ...ride,
-          available_seats: remaining,
-          status: remaining === 0 ? ('full' as const) : ride.status,
-        };
-      }
-      return ride;
-    });
-    saveRidesState(updatedRides);
+    if (res.success) {
+      await Promise.all([loadRequests(), loadRides()]);
+    } else {
+      alert('Failed to accept request: ' + res.error);
+    }
   };
 
   // Reject Request (Host Action)
-  const handleRejectRequest = (requestId: string) => {
-    const updatedRequests = requests.map((r) =>
-      r.id === requestId ? { ...r, status: 'rejected' as const } : r
+  const handleRejectRequest = async (requestId: string) => {
+    const req = requests.find((r) => r.id === requestId);
+    if (!req) return;
+
+    const res = await updateRequestStatus(
+      requestId,
+      req.ride_id,
+      'rejected',
+      req.seats_requested
     );
-    saveRequestsState(updatedRequests);
+
+    if (res.success) {
+      loadRequests();
+    } else {
+      alert('Failed to reject request: ' + res.error);
+    }
   };
 
   // Filter rides based on active tab and search
   const filteredRides = rides.filter((ride) => {
-    // Tab filter
     if (activeTab === 'exam' && ride.ride_category !== 'exam') return false;
 
-    // Search query
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       const matchesRoute =
@@ -170,14 +275,11 @@ export default function Home() {
       if (!matchesRoute) return false;
     }
 
-    // Transport Mode
     if (selectedMode !== 'all' && ride.transport_mode !== selectedMode) return false;
 
-    // Gender preference
     if (selectedGenderPref !== 'all' && ride.gender_preference !== selectedGenderPref)
       return false;
 
-    // Exam specific filters
     if (activeTab === 'exam') {
       if (selectedExamSession !== 'all' && ride.exam_session !== selectedExamSession)
         return false;
@@ -197,21 +299,53 @@ export default function Home() {
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        onOpenCreateModal={() => setIsCreateModalOpen(true)}
+        onOpenCreateModal={() => {
+          if (!currentUser) {
+            router.push('/login');
+          } else {
+            setIsCreateModalOpen(true);
+          }
+        }}
         user={currentUser}
+        onSignOut={handleSignOut}
       />
+
+      {/* Supabase Connection Notice if anon key not added */}
+      {!isSupabaseConfigured && (
+        <div className="bg-yellow/10 border-b border-yellow/30 px-4 py-2.5 text-xs text-yellow flex items-center justify-between">
+          <div className="flex items-center gap-2 max-w-5xl mx-auto w-full">
+            <KeyRound className="w-4 h-4 shrink-0" />
+            <span>
+              <strong>Supabase Setup:</strong> Add your <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in <code>.env.local</code> to connect your live database at <code>vltskirgkfvoulcwrvqa.supabase.co</code>.
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {activeTab === 'my-rides' ? (
-          <MyRidesView
-            currentUser={currentUser}
-            rides={rides}
-            requests={requests}
-            onAcceptRequest={handleAcceptRequest}
-            onRejectRequest={handleRejectRequest}
-            onOpenCreateModal={() => setIsCreateModalOpen(true)}
-          />
+          currentUser ? (
+            <MyRidesView
+              currentUser={currentUser}
+              rides={rides}
+              requests={requests}
+              onAcceptRequest={handleAcceptRequest}
+              onRejectRequest={handleRejectRequest}
+              onOpenCreateModal={() => setIsCreateModalOpen(true)}
+            />
+          ) : (
+            <div className="card text-center py-16 max-w-md mx-auto">
+              <ShieldCheck className="w-12 h-12 text-accent mx-auto mb-3" />
+              <h2 className="text-lg font-bold text-text mb-1">Sign in to View Activity</h2>
+              <p className="text-xs text-muted mb-6">
+                Sign in with your @srmist.edu.in account to manage rides and review passenger requests.
+              </p>
+              <Link href="/login" className="btn-primary text-xs py-2 px-6 mx-auto inline-flex">
+                Sign In with SRM Mail
+              </Link>
+            </div>
+          )
         ) : (
           <div>
             {/* Exam Banner if Exam Transit is active */}
@@ -221,11 +355,14 @@ export default function Home() {
                 setSelectedSession={setSelectedExamSession}
                 venueSearch={venueSearch}
                 setVenueSearch={setVenueSearch}
-                onPostExamRide={() => setIsCreateModalOpen(true)}
+                onPostExamRide={() => {
+                  if (!currentUser) router.push('/login');
+                  else setIsCreateModalOpen(true);
+                }}
               />
             )}
 
-            {/* General Header & Hero (When All Rides is active) */}
+            {/* General Header & Hero */}
             {activeTab === 'all' && (
               <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
@@ -233,14 +370,22 @@ export default function Home() {
                     SRMIST Campus Commute Feed
                   </h1>
                   <p className="text-xs sm:text-sm text-muted">
-                    Verified rides across Potheri, Estancia, Abode, Tambaram, Airport, and Chennai city.
+                    Live rides across Potheri, Estancia, Abode, Tambaram, Airport, and Chennai city.
                   </p>
                 </div>
 
                 <div className="flex items-center gap-2">
+                  <button
+                    onClick={loadRides}
+                    className="p-2 rounded-xl bg-surface2/60 border border-border text-muted hover:text-text text-xs flex items-center gap-1.5 transition-colors"
+                    title="Refresh live rides"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${loadingRides ? 'animate-spin text-accent' : ''}`} />
+                    <span className="hidden sm:inline">Refresh</span>
+                  </button>
                   <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface2/60 border border-border text-xs text-muted">
                     <ShieldCheck className="w-4 h-4 text-green" />
-                    <span>Zero Public PII Guarantee</span>
+                    <span>Zero Public PII</span>
                   </div>
                 </div>
               </div>
@@ -346,44 +491,47 @@ export default function Home() {
               </div>
             </div>
 
+            {/* Error banner if query failed */}
+            {errorMsg && (
+              <div className="mb-6 p-4 rounded-xl bg-red/10 border border-red/30 text-red text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>Database query error: {errorMsg}. (Check if Supabase migration is applied)</span>
+              </div>
+            )}
+
             {/* Ride Cards Grid */}
-            {filteredRides.length === 0 ? (
-              <div className="card text-center py-12 border-dashed border-border/80">
+            {loadingRides ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {[1, 2, 3].map((n) => (
+                  <div key={n} className="card animate-pulse h-48 bg-surface/50 border-border/50" />
+                ))}
+              </div>
+            ) : filteredRides.length === 0 ? (
+              <div className="card text-center py-16 border-dashed border-border/80">
                 <Users className="w-10 h-10 text-muted mx-auto mb-3 opacity-40" />
                 <h3 className="text-base font-semibold text-text mb-1">
-                  No matching rides found
+                  No active rides in the database yet
                 </h3>
                 <p className="text-xs text-muted max-w-sm mx-auto mb-5">
-                  Try widening your filters, or be the first to post a ride heading that way!
+                  Be the first SRM student to publish a ride listing!
                 </p>
                 <button
-                  onClick={() => setIsCreateModalOpen(true)}
-                  className="btn-primary text-xs py-2 px-4 gap-1.5 mx-auto"
+                  onClick={() => {
+                    if (!currentUser) router.push('/login');
+                    else setIsCreateModalOpen(true);
+                  }}
+                  className="btn-primary text-xs py-2 px-5 gap-1.5 mx-auto"
                 >
                   <Plus className="w-4 h-4" />
-                  Post Ride Now
+                  Post First Ride
                 </button>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {filteredRides.map((ride) => {
                   const existingReq = requests.find(
-                    (r) => r.ride_id === ride.id && r.passenger_id === currentUser.id
+                    (r) => r.ride_id === ride.id && r.passenger_id === currentUser?.id
                   );
-
-                  // Mock unlocked contact if host or accepted
-                  const unlockedContacts: UnlockedContact[] =
-                    currentUser.id === ride.host_id || existingReq?.status === 'accepted'
-                      ? [
-                          {
-                            user_id: ride.host_id,
-                            full_name: 'Verified SRM Host',
-                            phone_number: '+91 98765 43210',
-                            whatsapp_number: '+919876543210',
-                            role: 'host',
-                          },
-                        ]
-                      : [];
 
                   return (
                     <RideCard
@@ -391,8 +539,11 @@ export default function Home() {
                       ride={ride}
                       currentUser={currentUser}
                       userRequestStatus={existingReq?.status}
-                      unlockedContacts={unlockedContacts}
-                      onRequestJoin={(targetRide) => setSelectedRideForJoin(targetRide)}
+                      unlockedContacts={unlockedContactsMap[ride.id] || []}
+                      onRequestJoin={(targetRide) => {
+                        if (!currentUser) router.push('/login');
+                        else setSelectedRideForJoin(targetRide);
+                      }}
                     />
                   );
                 })}
@@ -416,22 +567,36 @@ export default function Home() {
         </div>
       </footer>
 
+      {/* Profile Onboarding Modal for New Students */}
+      {userId && (
+        <ProfileModal
+          isOpen={isProfileModalOpen}
+          userEmail={userEmail}
+          userId={userId}
+          onSaveProfile={handleSaveProfile}
+        />
+      )}
+
       {/* Post Ride Modal */}
-      <CreateRideModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        currentUser={currentUser}
-        onCreateRide={handleCreateRide}
-      />
+      {currentUser && (
+        <CreateRideModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          currentUser={currentUser}
+          onCreateRide={handleCreateRide}
+        />
+      )}
 
       {/* Join Request Modal */}
-      <JoinRequestModal
-        isOpen={Boolean(selectedRideForJoin)}
-        onClose={() => setSelectedRideForJoin(null)}
-        ride={selectedRideForJoin}
-        currentUser={currentUser}
-        onSubmitRequest={handleSubmitRequest}
-      />
+      {currentUser && (
+        <JoinRequestModal
+          isOpen={Boolean(selectedRideForJoin)}
+          onClose={() => setSelectedRideForJoin(null)}
+          ride={selectedRideForJoin}
+          currentUser={currentUser}
+          onSubmitRequest={handleSubmitRequest}
+        />
+      )}
     </div>
   );
 }
