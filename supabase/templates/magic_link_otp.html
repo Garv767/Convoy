@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Convoy Verification Code</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #0f1117; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #e2e8f0; -webkit-font-smoothing: antialiased;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #0f1117; padding: 40px 16px;">
+    <tr>
+      <td align="center">
+        <!-- Main Container -->
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 520px; background-color: #1a1d27; border: 1px solid #2e3347; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+          
+          <!-- Top Accent Bar -->
+          <tr>
+            <td height="4" style="background: linear-gradient(90deg, #6c8ef7 0%, #a78bfa 100%); font-size: 0; line-height: 0;">&nbsp;</td>
+          </tr>
+
+          <!-- Content Padding -->
+          <tr>
+            <td style="padding: 36px 32px 32px 32px;">
+              
+              <!-- Brand Header -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 28px;">
+                <tr>
+                  <td>
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                      <tr>
+                        <!-- Logo badge -->
+                        <td width="40" height="40" align="center" style="background: linear-gradient(135deg, #6c8ef7 0%, #a78bfa 100%); border-radius: 10px;">
+                          <!-- Car vector icon representation -->
+                          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display: block;">
+                            <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
+                            <circle cx="7" cy="17" r="2"/>
+                            <path d="M9 17h6"/>
+                            <circle cx="17" cy="17" r="2"/>
+                          </svg>
+                        </td>
+                        <td style="padding-left: 14px;">
+                          <div style="font-size: 20px; font-weight: 800; letter-spacing: -0.5px; color: #ffffff;">
+                            Convoy <span style="font-size: 11px; font-weight: 600; text-transform: uppercase; background-color: #242736; border: 1px solid #2e3347; color: #8892a4; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 6px;">unfugly</span>
+                          </div>
+                          <div style="font-size: 12px; color: #8892a4; margin-top: 2px;">
+                            SRMIST Verified Campus & Exam Transit
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Main Heading -->
+              <h1 style="font-size: 22px; font-weight: 700; color: #ffffff; margin: 0 0 10px 0; letter-spacing: -0.3px;">
+                Your Verification Code
+              </h1>
+              
+              <p style="font-size: 14px; line-height: 22px; color: #8892a4; margin: 0 0 24px 0;">
+                Use this one-time code to securely sign in to your verified SRM student account:
+              </p>
+
+              <!-- Prominent 6-Digit OTP Box -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 24px 0;">
+                <tr>
+                  <td align="center" style="background-color: #242736; border: 1px solid #2e3347; border-radius: 12px; padding: 20px 16px;">
+                    <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; color: #8892a4; margin-bottom: 8px;">
+                      One-Time OTP Code
+                    </div>
+                    <div style="font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 38px; font-weight: 800; letter-spacing: 10px; color: #6c8ef7; line-height: 1.2;">
+                      {{ .Token }}
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Divider with "or" -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 24px 0;">
+                <tr>
+                  <td style="border-bottom: 1px solid #2e3347;">&nbsp;</td>
+                  <td width="36" align="center" style="font-size: 11px; text-transform: uppercase; font-weight: 600; color: #8892a4; padding: 0 8px;">
+                    or
+                  </td>
+                  <td style="border-bottom: 1px solid #2e3347;">&nbsp;</td>
+                </tr>
+              </table>
+
+              <!-- Instant Magic Link Button -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 0 0 28px 0;">
+                <tr>
+                  <td align="center">
+                    <a href="{{ .ConfirmationURL }}" target="_blank" style="display: block; width: 100%; box-sizing: border-box; text-align: center; background: linear-gradient(135deg, #6c8ef7 0%, #a78bfa 100%); color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; padding: 14px 24px; border-radius: 10px; box-shadow: 0 4px 14px rgba(108, 142, 247, 0.35);">
+                      Sign In Instantly (1-Click Link) &rarr;
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Security Information Callout -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #151821; border-left: 3px solid #6c8ef7; border-radius: 0 8px 8px 0; padding: 12px 14px; margin-bottom: 24px;">
+                <tr>
+                  <td style="font-size: 12px; line-height: 18px; color: #8892a4;">
+                    <strong style="color: #e2e8f0;">Security Notice:</strong> This code expires in 10 minutes. Only students with official <code style="color: #6c8ef7; background-color: #242736; padding: 1px 4px; border-radius: 3px;">@srmist.edu.in</code> accounts are permitted. Never share this code with anyone.
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Closing -->
+              <p style="font-size: 12px; color: #8892a4; margin: 0; line-height: 18px;">
+                If you did not request this login code, you can safely ignore this email. No action is required.
+              </p>
+
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #151821; border-top: 1px solid #2e3347; padding: 20px 32px; text-align: center;">
+              <p style="font-size: 11px; color: #8892a4; margin: 0 0 6px 0;">
+                <strong style="color: #e2e8f0;">Convoy</strong> &middot; A privacy-first companion of <a href="https://unfugly.app" target="_blank" style="color: #6c8ef7; text-decoration: none;">unfugly.app</a>
+              </p>
+              <p style="font-size: 10px; color: #5a6475; margin: 0;">
+                Zero Public PII &middot; Encrypted SRM Student Transit Network
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
