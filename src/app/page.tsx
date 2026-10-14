@@ -24,6 +24,7 @@ import {
   fetchUserProfile,
   saveUserProfile,
   createLiveRide,
+  updateLiveRide,
   submitLiveRequest,
   fetchIncomingRequests,
   fetchOutgoingRequests,
@@ -65,6 +66,7 @@ export default function Home() {
 
   // Modals state
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [editingRide, setEditingRide] = useState<RideListing | null>(null);
   const [selectedRideForJoin, setSelectedRideForJoin] = useState<RideListing | null>(null);
 
   // 1. Auth Listener: Check Supabase session
@@ -165,6 +167,18 @@ export default function Home() {
     setCurrentUser(null);
     setUserEmail('');
     setUserId('');
+  };
+
+  // Update Ride (Live DB Update)
+  const handleUpdateRide = async (rideId: string, updatedRideData: any) => {
+    const res = await updateLiveRide(rideId, updatedRideData);
+    if (res.success) {
+      await loadRides();
+      setEditingRide(null);
+      setIsCreateModalOpen(false);
+    } else {
+      alert('Could not update ride: ' + res.error);
+    }
   };
 
   // Create Ride (Live DB Insert)
@@ -336,8 +350,15 @@ export default function Home() {
               requests={requests}
               onAcceptRequest={handleAcceptRequest}
               onRejectRequest={handleRejectRequest}
-              onOpenCreateModal={() => setIsCreateModalOpen(true)}
+              onOpenCreateModal={() => {
+                setEditingRide(null);
+                setIsCreateModalOpen(true);
+              }}
               onEditProfile={() => setIsProfileModalOpen(true)}
+              onEditRide={(ride) => {
+                setEditingRide(ride);
+                setIsCreateModalOpen(true);
+              }}
             />
           ) : (
             <div className="card text-center py-12 max-w-sm mx-auto my-8">
@@ -463,7 +484,10 @@ export default function Home() {
                 <button
                   onClick={() => {
                     if (!currentUser) router.push('/login');
-                    else setIsCreateModalOpen(true);
+                    else {
+                      setEditingRide(null);
+                      setIsCreateModalOpen(true);
+                    }
                   }}
                   className="btn-primary text-xs py-2 px-4 gap-1.5 mx-auto"
                 >
@@ -488,6 +512,10 @@ export default function Home() {
                       onRequestJoin={(targetRide) => {
                         if (!currentUser) router.push('/login');
                         else setSelectedRideForJoin(targetRide);
+                      }}
+                      onEditRide={(targetRide) => {
+                        setEditingRide(targetRide);
+                        setIsCreateModalOpen(true);
                       }}
                     />
                   );
@@ -517,12 +545,17 @@ export default function Home() {
         />
       )}
 
-      {/* Post NPTEL Ride Modal */}
+      {/* Post / Edit Ride Modal */}
       <CreateRideModal
         isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
+        initialRide={editingRide}
+        onClose={() => {
+          setIsCreateModalOpen(false);
+          setEditingRide(null);
+        }}
         currentUser={currentUser}
         onCreateRide={handleCreateRide}
+        onUpdateRide={handleUpdateRide}
       />
 
       {/* Join Request Modal */}

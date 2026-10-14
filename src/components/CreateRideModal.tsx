@@ -14,7 +14,9 @@ interface CreateRideModalProps {
   isOpen: boolean;
   onClose: () => void;
   currentUser: UserProfile | null;
+  initialRide?: RideListing | null;
   onCreateRide: (newRide: Omit<RideListing, 'id' | 'created_at' | 'status'>) => void;
+  onUpdateRide?: (rideId: string, updatedRide: Partial<RideListing>) => void;
 }
 
 const COMMON_PICKUPS = [
@@ -30,14 +32,15 @@ export default function CreateRideModal({
   isOpen,
   onClose,
   currentUser,
+  initialRide,
   onCreateRide,
+  onUpdateRide,
 }: CreateRideModalProps) {
+  const isEditing = Boolean(initialRide);
+
   // Shift & Timing (FN is 9am-12pm, AN is 2pm-5pm)
   const [examShift, setExamShift] = useState<ExamSession>('FN');
   const [departureDate, setDepartureDate] = useState('');
-  React.useEffect(() => {
-    setDepartureDate(new Date().toISOString().split('T')[0]);
-  }, []);
   const [departureTime, setDepartureTime] = useState('07:15');
 
   // Route
@@ -47,12 +50,38 @@ export default function CreateRideModal({
   // Mode
   const [transportMode, setTransportMode] = useState<TransportMode>('cab');
 
-  // Seats (Filled & Available)
+  // Seats (Filled & Available) - occupied ALWAYS includes the host (min 1)
   const [availableSeats, setAvailableSeats] = useState(2);
   const [filledSeats, setFilledSeats] = useState(1);
 
   // Notes
   const [notes, setNotes] = useState('');
+
+  React.useEffect(() => {
+    if (initialRide) {
+      setExamShift(initialRide.exam_session || 'FN');
+      setDepartureDate(initialRide.departure_date || '');
+      setDepartureTime(initialRide.departure_time || '07:15');
+      setPickup(initialRide.origin || '');
+      setDestination(initialRide.destination || '');
+      setTransportMode(initialRide.transport_mode || 'cab');
+      setAvailableSeats(initialRide.available_seats);
+      // In seats occupied count, always include the host (minimum 1)
+      const occupied = Math.max(1, (initialRide.total_seats || 1) - (initialRide.available_seats || 0));
+      setFilledSeats(occupied);
+      setNotes(initialRide.notes || '');
+    } else {
+      setExamShift('FN');
+      setDepartureDate(new Date().toISOString().split('T')[0]);
+      setDepartureTime('07:15');
+      setPickup('');
+      setDestination('');
+      setTransportMode('cab');
+      setAvailableSeats(2);
+      setFilledSeats(1); // Host is always included, minimum 1
+      setNotes('');
+    }
+  }, [initialRide, isOpen]);
 
   if (!isOpen) return null;
 
@@ -84,29 +113,46 @@ export default function CreateRideModal({
     e.preventDefault();
     if (!pickup.trim() || !destination.trim()) return;
 
+    // Total seats = occupied seats (host + pre-filled peers) + available seats
     const total = Number(filledSeats) + Number(availableSeats);
 
-    onCreateRide({
-      host_id: currentUser?.id || '',
-      ride_category: 'exam',
-      exam_session: examShift,
-      exam_venue: destination.trim(),
-      origin: pickup.trim(),
-      destination: destination.trim(),
-      departure_date: departureDate,
-      departure_time: departureTime,
-      transport_mode: transportMode,
-      vehicle_type: getModeLabel(transportMode),
-      total_seats: total,
-      available_seats: Number(availableSeats),
-      fare_type: 'split',
-      gender_preference: 'any',
-      notes: notes.trim() || undefined,
-      host_gender: currentUser?.gender || 'other',
-      host_department: currentUser?.department || 'SRMIST',
-      host_year: currentUser?.year_of_study || 1,
-      host_is_verified: currentUser?.is_verified || false,
-    });
+    if (isEditing && initialRide && onUpdateRide) {
+      onUpdateRide(initialRide.id, {
+        exam_session: examShift,
+        exam_venue: destination.trim(),
+        origin: pickup.trim(),
+        destination: destination.trim(),
+        departure_date: departureDate,
+        departure_time: departureTime,
+        transport_mode: transportMode,
+        vehicle_type: getModeLabel(transportMode),
+        total_seats: total,
+        available_seats: Number(availableSeats),
+        notes: notes.trim() || undefined,
+      });
+    } else {
+      onCreateRide({
+        host_id: currentUser?.id || '',
+        ride_category: 'exam',
+        exam_session: examShift,
+        exam_venue: destination.trim(),
+        origin: pickup.trim(),
+        destination: destination.trim(),
+        departure_date: departureDate,
+        departure_time: departureTime,
+        transport_mode: transportMode,
+        vehicle_type: getModeLabel(transportMode),
+        total_seats: total,
+        available_seats: Number(availableSeats),
+        fare_type: 'split',
+        gender_preference: 'any',
+        notes: notes.trim() || undefined,
+        host_gender: currentUser?.gender || 'other',
+        host_department: currentUser?.department || 'SRMIST',
+        host_year: currentUser?.year_of_study || 1,
+        host_is_verified: currentUser?.is_verified || false,
+      });
+    }
 
     onClose();
   };
@@ -121,7 +167,9 @@ export default function CreateRideModal({
               <GraduationCap className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-text">Post a Ride</h2>
+              <h2 className="text-base font-bold text-text">
+                {isEditing ? 'Edit Ride' : 'Post a Ride'}
+              </h2>
             </div>
           </div>
           <button
@@ -354,13 +402,14 @@ export default function CreateRideModal({
 
               <div>
                 <label className="block text-[11px] text-muted mb-1">
-                  Already filled (with you)
+                  Occupied (host included)
                 </label>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={() => setFilledSeats(Math.max(1, filledSeats - 1))}
                     className="w-8 h-8 rounded-lg bg-surface border border-border text-text font-bold text-sm flex items-center justify-center hover:bg-surface2"
+                    title="Minimum 1 (host is always included)"
                   >
                     -
                   </button>
@@ -369,12 +418,15 @@ export default function CreateRideModal({
                   </span>
                   <button
                     type="button"
-                    onClick={() => setFilledSeats(Math.min(5, filledSeats + 1))}
+                    onClick={() => setFilledSeats(Math.min(6, filledSeats + 1))}
                     className="w-8 h-8 rounded-lg bg-surface border border-border text-text font-bold text-sm flex items-center justify-center hover:bg-surface2"
                   >
                     +
                   </button>
                 </div>
+                <p className="text-[10px] text-muted/70 mt-0.5 text-center">
+                  Includes host
+                </p>
               </div>
             </div>
           </div>
@@ -406,7 +458,7 @@ export default function CreateRideModal({
               type="submit"
               className="btn-primary text-xs py-2.5 px-5"
             >
-              Publish Ride
+              {isEditing ? 'Save Changes' : 'Publish Ride'}
             </button>
           </div>
         </form>

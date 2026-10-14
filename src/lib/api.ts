@@ -132,6 +132,61 @@ export async function createLiveRide(
 }
 
 /**
+ * Update an existing ride in commute_rides and commute_exam_details.
+ */
+export async function updateLiveRide(
+  rideId: string,
+  ride: Partial<NewRideInput>
+): Promise<{ success: boolean; error: string | null }> {
+  try {
+    const updatePayload: Record<string, any> = {
+      updated_at: new Date().toISOString(),
+    };
+
+    if (ride.origin !== undefined) updatePayload.origin = ride.origin;
+    if (ride.destination !== undefined) updatePayload.destination = ride.destination;
+    if (ride.departure_date !== undefined) updatePayload.departure_date = ride.departure_date;
+    if (ride.departure_time !== undefined) updatePayload.departure_time = ride.departure_time;
+    if (ride.transport_mode !== undefined) updatePayload.transport_mode = ride.transport_mode;
+    if (ride.vehicle_type !== undefined) updatePayload.vehicle_type = ride.vehicle_type;
+    if (ride.total_seats !== undefined) updatePayload.total_seats = ride.total_seats;
+    if (ride.available_seats !== undefined) updatePayload.available_seats = ride.available_seats;
+    if (ride.fare_type !== undefined) updatePayload.fare_type = ride.fare_type;
+    if (ride.estimated_cost_inr !== undefined) updatePayload.estimated_cost_inr = ride.estimated_cost_inr;
+    if (ride.gender_preference !== undefined) updatePayload.gender_preference = ride.gender_preference;
+    if (ride.notes !== undefined) updatePayload.notes = ride.notes;
+
+    const { error: rideError } = await supabase
+      .from('commute_rides')
+      .update(updatePayload)
+      .eq('id', rideId);
+
+    if (rideError) return { success: false, error: rideError.message };
+
+    // If it is an exam ride, update exam details
+    if (ride.exam_session && ride.exam_venue) {
+      const { error: examError } = await supabase
+        .from('commute_exam_details')
+        .upsert(
+          {
+            ride_id: rideId,
+            session: ride.exam_session,
+            venue: ride.exam_venue,
+            course_code: ride.exam_course_code || null,
+          },
+          { onConflict: 'ride_id' }
+        );
+
+      if (examError) console.error('Error updating exam details:', examError.message);
+    }
+
+    return { success: true, error: null };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+}
+
+/**
  * Submit join request to commute_requests.
  */
 export async function submitLiveRequest(input: {

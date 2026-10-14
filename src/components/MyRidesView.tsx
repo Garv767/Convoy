@@ -20,6 +20,7 @@ interface MyRidesViewProps {
   onRejectRequest: (requestId: string) => void;
   onOpenCreateModal: () => void;
   onEditProfile?: () => void;
+  onEditRide?: (ride: RideListing) => void;
 }
 
 export default function MyRidesView({
@@ -30,6 +31,7 @@ export default function MyRidesView({
   onRejectRequest,
   onOpenCreateModal,
   onEditProfile,
+  onEditRide,
 }: MyRidesViewProps) {
   // Rides hosted by current user
   const hostedRides = rides.filter((r) => r.host_id === currentUser.id);
@@ -330,22 +332,37 @@ export default function MyRidesView({
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
             {hostedRides.map((ride) => (
-              <div key={ride.id} className="card border-border bg-surface p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <TransportBadge mode={ride.transport_mode} vehicleType={ride.vehicle_type} size="sm" />
-                  <span className="text-xs text-muted">
-                    {ride.available_seats} of {ride.total_seats} seats left
-                  </span>
+              <div key={ride.id} className="card border-border bg-surface p-4 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <TransportBadge mode={ride.transport_mode} vehicleType={ride.vehicle_type} size="sm" />
+                    <span className="text-xs text-muted">
+                      {ride.available_seats} of {ride.total_seats} seats left
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm font-semibold text-text mb-1.5">
+                    <span>{ride.origin}</span>
+                    <ArrowRight className="w-3 h-3 text-muted shrink-0" />
+                    <span>{ride.destination}</span>
+                  </div>
+                  <div className="text-xs text-muted flex items-center justify-between">
+                    <span>{ride.departure_time} · {ride.departure_date}</span>
+                    <span className="font-semibold text-text capitalize">{ride.fare_type}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 text-sm font-semibold text-text mb-1.5">
-                  <span>{ride.origin}</span>
-                  <ArrowRight className="w-3 h-3 text-muted shrink-0" />
-                  <span>{ride.destination}</span>
-                </div>
-                <div className="text-xs text-muted flex items-center justify-between">
-                  <span>{ride.departure_time} · {ride.departure_date}</span>
-                  <span className="font-semibold text-text capitalize">{ride.fare_type}</span>
-                </div>
+
+                {onEditRide && (
+                  <div className="mt-3 pt-3 border-t border-border flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => onEditRide(ride)}
+                      className="btn-secondary text-xs py-1.5 px-3 flex items-center gap-1.5"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                      <span>Edit Ride</span>
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>

@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   ArrowRight,
   ShieldCheck,
+  Edit3,
 } from 'lucide-react';
 import { RideListing, UserProfile, RequestStatus, UnlockedContact } from '../types';
 import TransportBadge from './TransportBadge';
@@ -18,6 +19,7 @@ interface RideCardProps {
   userRequestStatus?: RequestStatus;
   unlockedContacts?: UnlockedContact[];
   onRequestJoin: (ride: RideListing) => void;
+  onEditRide?: (ride: RideListing) => void;
 }
 
 export default function RideCard({
@@ -26,6 +28,7 @@ export default function RideCard({
   userRequestStatus,
   unlockedContacts,
   onRequestJoin,
+  onEditRide,
 }: RideCardProps) {
   const isHost = currentUser?.id === ride.host_id;
   const isAccepted = userRequestStatus === 'accepted';
@@ -51,7 +54,8 @@ export default function RideCard({
   };
 
   const hostContact = unlockedContacts?.find((c) => c.role === 'host');
-  const filledSeats = Math.max(0, ride.total_seats - ride.available_seats);
+  // Seats occupied count always includes the host (minimum 1)
+  const filledSeats = Math.max(1, ride.total_seats - ride.available_seats);
 
   return (
     <div className="card card-hover flex flex-col justify-between border-border bg-surface transition-all p-4 sm:p-5">
@@ -161,8 +165,21 @@ export default function RideCard({
       {/* Primary Action Button */}
       <div>
         {isHost ? (
-          <div className="w-full py-2 px-3 rounded-lg bg-surface2 border border-border text-center text-xs font-medium text-accent">
-            Your Ride
+          <div className="flex items-center gap-2">
+            <div className="flex-1 py-2 px-3 rounded-lg bg-surface2 border border-border text-center text-xs font-medium text-accent">
+              Your Ride
+            </div>
+            {onEditRide && (
+              <button
+                type="button"
+                onClick={() => onEditRide(ride)}
+                className="btn-secondary py-2 px-3 text-xs gap-1.5 flex items-center shrink-0"
+                title="Edit Ride Details"
+              >
+                <Edit3 className="w-3.5 h-3.5" />
+                <span>Edit</span>
+              </button>
+            )}
           </div>
         ) : isAccepted ? (
           <div className="w-full py-2 px-3 rounded-lg bg-green/15 border border-green/30 text-center text-xs font-semibold text-green flex items-center justify-center gap-1.5">
