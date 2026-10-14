@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="convoyGradient" x1="6" y1="6" x2="58" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6366F1" />
+      <stop offset="60%" stop-color="#4F46E5" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+    <linearGradient id="streamGrad" x1="14" y1="18" x2="50" y2="46" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#93C5FD" />
+    </linearGradient>
+    <filter id="shadow" x="0" y="0" width="64" height="64" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#4F46E5" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Squircle Base -->
+  <rect width="64" height="64" rx="16" fill="#0B0E17"/>
+  <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.25" stroke="#1E2337" stroke-width="1.5"/>
+
+  <!-- Glowing Stream Orbit / Convoy Track -->
+  <path d="M48 20.5C45.5 15.5 40 12 33 12C21.4 12 12 21.4 12 33C12 44.6 21.4 54 33 54C42 54 49 48 51.5 40" 
+        stroke="url(#convoyGradient)" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Twin Convoy Speed Darts -->
+  <path d="M25 25L41 33L25 41L29 33L25 25Z" fill="url(#streamGrad)" filter="url(#shadow)"/>
+  
+  <circle cx="48" cy="20.5" r="3.5" fill="#06B6D4"/>
+  <circle cx="18" cy="33" r="2.5" fill="#818CF8"/>
+</svg>

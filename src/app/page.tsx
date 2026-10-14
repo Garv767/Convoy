@@ -28,19 +28,15 @@ import {
   fetchIncomingRequests,
   fetchOutgoingRequests,
   updateRequestStatus,
-  fetchRideContacts,
 } from '../lib/api';
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import {
-  Search,
   Plus,
   Bus,
   TrainFront,
   CarTaxiFront,
   Bike,
   ShieldCheck,
-  GraduationCap,
-  Users,
   RefreshCw,
   AlertCircle,
   KeyRound,
@@ -48,7 +44,7 @@ import {
 
 export default function Home() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'all' | 'exam' | 'my-rides'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'exam' | 'my-rides'>('exam');
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [userEmail, setUserEmail] = useState<string>('');
   const [userId, setUserId] = useState<string>('');
@@ -63,11 +59,7 @@ export default function Home() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Search & Filters
-  const [searchQuery, setSearchQuery] = useState('');
   const [selectedMode, setSelectedMode] = useState<'all' | TransportMode>('all');
-  const [selectedGenderPref, setSelectedGenderPref] = useState<'all' | GenderPreference>('all');
-  
-  // Exam Filters
   const [selectedExamSession, setSelectedExamSession] = useState<'all' | ExamSession>('all');
   const [venueSearch, setVenueSearch] = useState('');
 
@@ -91,7 +83,6 @@ export default function Home() {
         if (profile) {
           setCurrentUser(profile);
         } else {
-          // Open profile completion modal
           setIsProfileModalOpen(true);
         }
       }
@@ -152,10 +143,10 @@ export default function Home() {
   }, [currentUser]);
 
   useEffect(() => {
-    if (activeTab === 'my-rides' && currentUser) {
+    if (currentUser) {
       loadRequests();
     }
-  }, [activeTab, currentUser, loadRequests]);
+  }, [currentUser, loadRequests]);
 
   // Save new user profile from modal
   const handleSaveProfile = async (profileData: UserProfile) => {
@@ -179,6 +170,9 @@ export default function Home() {
   // Create Ride (Live DB Insert)
   const handleCreateRide = async (newRideData: any) => {
     if (!currentUser) {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('convoy_pending_ride', JSON.stringify(newRideData));
+      }
       router.push('/login');
       return;
     }
@@ -189,12 +183,28 @@ export default function Home() {
     });
 
     if (res.success) {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('convoy_pending_ride');
+      }
       await loadRides();
-      setActiveTab(newRideData.ride_category === 'exam' ? 'exam' : 'all');
+      setActiveTab('exam');
     } else {
       alert('Could not publish ride: ' + res.error);
     }
   };
+
+  // Auto-publish pending ride draft after login
+  useEffect(() => {
+    if (currentUser && typeof window !== 'undefined') {
+      const pendingStr = localStorage.getItem('convoy_pending_ride');
+      if (pendingStr) {
+        try {
+          const draft = JSON.parse(pendingStr);
+          handleCreateRide(draft);
+        } catch (e) {}
+      }
+    }
+  }, [currentUser]);
 
   // Request to Join (Live DB Insert)
   const handleSubmitRequest = async (
@@ -217,8 +227,8 @@ export default function Home() {
     });
 
     if (res.success) {
-      alert('Request sent to host successfully!');
-      if (activeTab === 'my-rides') loadRequests();
+      alert('Request sent to host!');
+      if (currentUser) loadRequests();
     } else {
       alert('Failed to send request: ' + res.error);
     }
@@ -262,36 +272,34 @@ export default function Home() {
     }
   };
 
-  // Filter rides based on active tab and search
+  // Filter rides based on search, shift, and mode
   const filteredRides = rides.filter((ride) => {
-    if (activeTab === 'exam' && ride.ride_category !== 'exam') return false;
-
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      const matchesRoute =
-        ride.origin.toLowerCase().includes(q) ||
-        ride.destination.toLowerCase().includes(q) ||
-        ride.vehicle_type?.toLowerCase().includes(q);
-      if (!matchesRoute) return false;
+    // Venue or pickup search
+    if (venueSearch.trim()) {
+      const v = venueSearch.toLowerCase();
+      const matchesCenter =
+        ride.destination.toLowerCase().includes(v) ||
+        ride.origin.toLowerCase().includes(v) ||
+        ride.exam_venue?.toLowerCase().includes(v);
+      if (!matchesCenter) return false;
     }
 
-    if (selectedMode !== 'all' && ride.transport_mode !== selectedMode) return false;
-
-    if (selectedGenderPref !== 'all' && ride.gender_preference !== selectedGenderPref)
+    // Shift filter (FN / AN)
+    if (selectedExamSession !== 'all' && ride.exam_session !== selectedExamSession) {
       return false;
+    }
 
-    if (activeTab === 'exam') {
-      if (selectedExamSession !== 'all' && ride.exam_session !== selectedExamSession)
-        return false;
-      if (venueSearch.trim()) {
-        const v = venueSearch.toLowerCase();
-        const matchesVenue = ride.exam_venue?.toLowerCase().includes(v);
-        if (!matchesVenue) return false;
-      }
+    // Mode filter
+    if (selectedMode !== 'all' && ride.transport_mode !== selectedMode) {
+      return false;
     }
 
     return true;
   });
+
+  const pendingIncomingCount = requests.filter(
+    (req) => req.status === 'pending' && rides.some((r) => r.id === req.ride_id && r.host_id === currentUser?.id)
+  ).length;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -299,31 +307,27 @@ export default function Home() {
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        onOpenCreateModal={() => {
-          if (!currentUser) {
-            router.push('/login');
-          } else {
-            setIsCreateModalOpen(true);
-          }
-        }}
+        onOpenCreateModal={() => setIsCreateModalOpen(true)}
+        onEditProfile={() => setIsProfileModalOpen(true)}
         user={currentUser}
         onSignOut={handleSignOut}
+        pendingCount={pendingIncomingCount}
       />
 
       {/* Supabase Connection Notice if anon key not added */}
       {!isSupabaseConfigured && (
-        <div className="bg-yellow/10 border-b border-yellow/30 px-4 py-2.5 text-xs text-yellow flex items-center justify-between">
-          <div className="flex items-center gap-2 max-w-5xl mx-auto w-full">
+        <div className="bg-yellow/10 border-b border-yellow/20 px-4 py-2 text-xs text-yellow">
+          <div className="flex items-center gap-2 max-w-7xl mx-auto w-full">
             <KeyRound className="w-4 h-4 shrink-0" />
             <span>
-              <strong>Supabase Setup:</strong> Add your <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in <code>.env.local</code> to connect your live database at <code>vltskirgkfvoulcwrvqa.supabase.co</code>.
+              Add <code>NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY</code> in <code>.env.local</code> to connect live data.
             </span>
           </div>
         </div>
       )}
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24 md:pb-8">
         {activeTab === 'my-rides' ? (
           currentUser ? (
             <MyRidesView
@@ -333,201 +337,142 @@ export default function Home() {
               onAcceptRequest={handleAcceptRequest}
               onRejectRequest={handleRejectRequest}
               onOpenCreateModal={() => setIsCreateModalOpen(true)}
+              onEditProfile={() => setIsProfileModalOpen(true)}
             />
           ) : (
-            <div className="card text-center py-16 max-w-md mx-auto">
-              <ShieldCheck className="w-12 h-12 text-accent mx-auto mb-3" />
-              <h2 className="text-lg font-bold text-text mb-1">Sign in to View Activity</h2>
-              <p className="text-xs text-muted mb-6">
-                Sign in with your @srmist.edu.in account to manage rides and review passenger requests.
+            <div className="card text-center py-12 max-w-sm mx-auto my-8">
+              <div className="w-10 h-10 rounded-full bg-accent/15 text-accent flex items-center justify-center mx-auto mb-3">
+                <ShieldCheck className="w-5 h-5 text-green" />
+              </div>
+              <h2 className="text-base font-bold text-text mb-1">Sign in to View Activity</h2>
+              <p className="text-xs text-muted mb-5">
+                Use your @srmist.edu.in account to view requests and host activity.
               </p>
-              <Link href="/login" className="btn-primary text-xs py-2 px-6 mx-auto inline-flex">
-                Sign In with SRM Mail
+              <Link href="/login" className="btn-primary text-xs py-2 px-5 mx-auto inline-flex">
+                Sign In
               </Link>
             </div>
           )
         ) : (
           <div>
-            {/* Exam Banner if Exam Transit is active */}
-            {activeTab === 'exam' && (
-              <ExamTransitBanner
-                selectedSession={selectedExamSession}
-                setSelectedSession={setSelectedExamSession}
-                venueSearch={venueSearch}
-                setVenueSearch={setVenueSearch}
-                onPostExamRide={() => {
-                  if (!currentUser) router.push('/login');
-                  else setIsCreateModalOpen(true);
-                }}
-              />
-            )}
+            {/* NPTEL Exam Transit Banner & Shift / Center Filter */}
+            <ExamTransitBanner
+              selectedSession={selectedExamSession}
+              setSelectedSession={setSelectedExamSession}
+              venueSearch={venueSearch}
+              setVenueSearch={setVenueSearch}
+              onPostExamRide={() => setIsCreateModalOpen(true)}
+            />
 
-            {/* General Header & Hero */}
-            {activeTab === 'all' && (
-              <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                  <h1 className="text-2xl font-extrabold text-text tracking-tight flex items-center gap-2">
-                    SRMIST Campus Commute Feed
-                  </h1>
-                  <p className="text-xs sm:text-sm text-muted">
-                    Live rides across Potheri, Estancia, Abode, Tambaram, Airport, and Chennai city.
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={loadRides}
-                    className="p-2 rounded-xl bg-surface2/60 border border-border text-muted hover:text-text text-xs flex items-center gap-1.5 transition-colors"
-                    title="Refresh live rides"
-                  >
-                    <RefreshCw className={`w-3.5 h-3.5 ${loadingRides ? 'animate-spin text-accent' : ''}`} />
-                    <span className="hidden sm:inline">Refresh</span>
-                  </button>
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface2/60 border border-border text-xs text-muted">
-                    <ShieldCheck className="w-4 h-4 text-green" />
-                    <span>Zero Public PII</span>
-                  </div>
-                </div>
+            {/* Mode of Transport Carousel & Ride Count */}
+            <div className="mb-4 sm:mb-5 flex items-center justify-between gap-2">
+              <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto py-1 w-full">
+                <button
+                  onClick={() => setSelectedMode('all')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all shrink-0 ${
+                    selectedMode === 'all'
+                      ? 'bg-accent text-white shadow-sm'
+                      : 'bg-surface2 text-muted hover:text-text border border-border'
+                  }`}
+                >
+                  All Modes
+                </button>
+                <button
+                  onClick={() => setSelectedMode('cab')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all shrink-0 ${
+                    selectedMode === 'cab'
+                      ? 'bg-yellow/20 text-yellow border border-yellow/40 shadow-sm'
+                      : 'bg-surface2 text-muted hover:text-text border border-border'
+                  }`}
+                >
+                  <CarTaxiFront className="w-3.5 h-3.5" />
+                  <span>Auto / Cab</span>
+                </button>
+                <button
+                  onClick={() => setSelectedMode('bus')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all shrink-0 ${
+                    selectedMode === 'bus'
+                      ? 'bg-accent/20 text-accent border border-accent/40 shadow-sm'
+                      : 'bg-surface2 text-muted hover:text-text border border-border'
+                  }`}
+                >
+                  <Bus className="w-3.5 h-3.5" />
+                  <span>Bus</span>
+                </button>
+                <button
+                  onClick={() => setSelectedMode('train')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all shrink-0 ${
+                    selectedMode === 'train'
+                      ? 'bg-accent2/20 text-accent2 border border-accent2/40 shadow-sm'
+                      : 'bg-surface2 text-muted hover:text-text border border-border'
+                  }`}
+                >
+                  <TrainFront className="w-3.5 h-3.5" />
+                  <span>Train</span>
+                </button>
+                <button
+                  onClick={() => setSelectedMode('private_vehicle')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all shrink-0 ${
+                    selectedMode === 'private_vehicle'
+                      ? 'bg-green/20 text-green border border-green/40 shadow-sm'
+                      : 'bg-surface2 text-muted hover:text-text border border-border'
+                  }`}
+                >
+                  <Bike className="w-3.5 h-3.5" />
+                  <span>Two-Wheeler</span>
+                </button>
               </div>
-            )}
 
-            {/* Filters & Search Toolbar */}
-            <div className="mb-6 space-y-3">
-              <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
-                {/* Search Origin / Destination */}
-                <div className="sm:col-span-6 relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted">
-                    <Search className="w-4 h-4" />
-                  </div>
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search by origin or destination (e.g. Estancia, Potheri, Central)..."
-                    className="input-field w-full pl-9 text-xs"
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery('')}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-xs text-muted hover:text-text"
-                    >
-                      Clear
-                    </button>
-                  )}
-                </div>
-
-                {/* Transport Mode Filter (Vector SVGs) */}
-                <div className="sm:col-span-4 flex items-center gap-1 bg-surface2/80 p-1 rounded-xl border border-border overflow-x-auto">
-                  <button
-                    onClick={() => setSelectedMode('all')}
-                    className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
-                      selectedMode === 'all'
-                        ? 'bg-accent text-white shadow-sm'
-                        : 'text-muted hover:text-text'
-                    }`}
-                  >
-                    All Modes
-                  </button>
-                  <button
-                    onClick={() => setSelectedMode('cab')}
-                    className={`p-1.5 rounded-lg text-xs font-medium transition-all ${
-                      selectedMode === 'cab'
-                        ? 'bg-yellow/20 text-yellow border border-yellow/30'
-                        : 'text-muted hover:text-text'
-                    }`}
-                    title="Cab / Auto"
-                  >
-                    <CarTaxiFront className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => setSelectedMode('bus')}
-                    className={`p-1.5 rounded-lg text-xs font-medium transition-all ${
-                      selectedMode === 'bus'
-                        ? 'bg-accent/20 text-accent border border-accent/30'
-                        : 'text-muted hover:text-text'
-                    }`}
-                    title="Bus / Shuttle"
-                  >
-                    <Bus className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => setSelectedMode('train')}
-                    className={`p-1.5 rounded-lg text-xs font-medium transition-all ${
-                      selectedMode === 'train'
-                        ? 'bg-accent2/20 text-accent2 border border-accent2/30'
-                        : 'text-muted hover:text-text'
-                    }`}
-                    title="Train / Metro"
-                  >
-                    <TrainFront className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => setSelectedMode('private_vehicle')}
-                    className={`p-1.5 rounded-lg text-xs font-medium transition-all ${
-                      selectedMode === 'private_vehicle'
-                        ? 'bg-green/20 text-green border border-green/30'
-                        : 'text-muted hover:text-text'
-                    }`}
-                    title="Private Vehicle"
-                  >
-                    <Bike className="w-4 h-4" />
-                  </button>
-                </div>
-
-                {/* Gender Preference Filter */}
-                <div className="sm:col-span-2">
-                  <select
-                    value={selectedGenderPref}
-                    onChange={(e) =>
-                      setSelectedGenderPref(e.target.value as 'all' | GenderPreference)
-                    }
-                    className="input-field w-full text-xs py-2"
-                  >
-                    <option value="all">Any Gender</option>
-                    <option value="female_only">Women Only</option>
-                    <option value="male_only">Men Only</option>
-                  </select>
-                </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={loadRides}
+                  className="p-1.5 rounded-lg bg-surface2 border border-border text-muted hover:text-text text-xs flex items-center gap-1"
+                  title="Refresh rides"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${loadingRides ? 'animate-spin text-accent' : ''}`} />
+                </button>
+                <span className="hidden sm:inline text-xs text-muted font-medium whitespace-nowrap">
+                  {filteredRides.length} {filteredRides.length === 1 ? 'ride' : 'rides'}
+                </span>
               </div>
             </div>
 
             {/* Error banner if query failed */}
             {errorMsg && (
-              <div className="mb-6 p-4 rounded-xl bg-red/10 border border-red/30 text-red text-xs flex items-center gap-2">
+              <div className="mb-4 p-3 rounded-xl bg-red/10 border border-red/20 text-red text-xs flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 shrink-0" />
-                <span>Database query error: {errorMsg}. (Check if Supabase migration is applied)</span>
+                <span>{errorMsg}</span>
               </div>
             )}
 
             {/* Ride Cards Grid */}
             {loadingRides ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
                 {[1, 2, 3].map((n) => (
-                  <div key={n} className="card animate-pulse h-48 bg-surface/50 border-border/50" />
+                  <div key={n} className="card animate-pulse h-44 bg-surface/50 border-border/50" />
                 ))}
               </div>
             ) : filteredRides.length === 0 ? (
-              <div className="card text-center py-16 border-dashed border-border/80">
-                <Users className="w-10 h-10 text-muted mx-auto mb-3 opacity-40" />
-                <h3 className="text-base font-semibold text-text mb-1">
-                  No active rides in the database yet
-                </h3>
-                <p className="text-xs text-muted max-w-sm mx-auto mb-5">
-                  Be the first SRM student to publish a ride listing!
+              <div className="card text-center py-12 border-dashed border-border my-4">
+                <p className="text-sm font-semibold text-text mb-1">
+                  No rides posted yet for this center or shift
+                </p>
+                <p className="text-xs text-muted mb-4">
+                  Heading to an exam center? Post your ride and pool with peers!
                 </p>
                 <button
                   onClick={() => {
                     if (!currentUser) router.push('/login');
                     else setIsCreateModalOpen(true);
                   }}
-                  className="btn-primary text-xs py-2 px-5 gap-1.5 mx-auto"
+                  className="btn-primary text-xs py-2 px-4 gap-1.5 mx-auto"
                 >
-                  <Plus className="w-4 h-4" />
-                  Post First Ride
+                  <Plus className="w-3.5 h-3.5" />
+                  Post Ride
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
                 {filteredRides.map((ride) => {
                   const existingReq = requests.find(
                     (r) => r.ride_id === ride.id && r.passenger_id === currentUser?.id
@@ -554,38 +499,31 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-auto border-t border-border bg-surface/40 py-6 text-center text-xs text-muted">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-text">Convoy</span>
-            <span className="text-muted/60">·</span>
-            <span>A subdomain companion of <a href="https://unfugly.app" className="text-accent hover:underline">unfugly.app</a></span>
-          </div>
-          <p className="text-[11px] text-muted/80">
-            For SRMIST Students · Secure Supabase SMTP Auth · Zero Public PII
-          </p>
+      <footer className="hidden md:block mt-auto border-t border-border py-4 text-xs text-muted">
+        <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
+          <span className="font-semibold text-text">Convoy</span>
         </div>
       </footer>
 
-      {/* Profile Onboarding Modal for New Students */}
-      {userId && (
+      {/* Profile Setup / Edit Modal */}
+      {(userId || currentUser) && (
         <ProfileModal
           isOpen={isProfileModalOpen}
-          userEmail={userEmail}
-          userId={userId}
+          userEmail={userEmail || (currentUser ? `${currentUser.user_net_id}@srmist.edu.in` : '')}
+          userId={userId || currentUser?.id || ''}
+          initialProfile={currentUser}
+          onClose={() => setIsProfileModalOpen(false)}
           onSaveProfile={handleSaveProfile}
         />
       )}
 
-      {/* Post Ride Modal */}
-      {currentUser && (
-        <CreateRideModal
-          isOpen={isCreateModalOpen}
-          onClose={() => setIsCreateModalOpen(false)}
-          currentUser={currentUser}
-          onCreateRide={handleCreateRide}
-        />
-      )}
+      {/* Post NPTEL Ride Modal */}
+      <CreateRideModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        currentUser={currentUser}
+        onCreateRide={handleCreateRide}
+      />
 
       {/* Join Request Modal */}
       {currentUser && (

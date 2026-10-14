@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -8,9 +8,25 @@ const inter = Inter({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover",
+  themeColor: "#0f1117",
+};
+
 export const metadata: Metadata = {
-  title: "Convoy | SRMIST Commute & Exam Transit",
-  description: "Verified student ridesharing and exam commute pooling for SRMIST Kattankulathur.",
+  title: "Convoy · SRMIST Ride Sharing",
+  description: "Campus transit & exam commute carpooling for SRMIST students.",
+  icons: {
+    icon: [
+      { url: "/convoy-logo.svg", type: "image/svg+xml" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: "/convoy-logo.svg",
+    shortcut: "/convoy-logo.svg",
+  },
 };
 
 export default function RootLayout({

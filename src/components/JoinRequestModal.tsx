@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ShieldCheck, ArrowRight, Lock, MessageCircle } from 'lucide-react';
+import { X, ArrowRight, ShieldCheck } from 'lucide-react';
 import { RideListing, UserProfile } from '../types';
 import TransportBadge from './TransportBadge';
 
@@ -31,50 +31,42 @@ export default function JoinRequestModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-      <div className="card w-full max-w-md bg-surface border-border relative">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/80 backdrop-blur-sm">
+      <div className="w-full sm:max-w-md bg-surface border-t sm:border border-border rounded-t-2xl sm:rounded-2xl p-5 shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-border mb-4">
-          <div>
-            <h3 className="text-lg font-bold text-text">Request to Join Ride</h3>
-            <p className="text-xs text-muted">Send a request to the host</p>
-          </div>
+        <div className="flex items-center justify-between pb-3 border-b border-border/70 mb-4">
+          <h3 className="text-base font-bold text-text">Request to Join</h3>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-muted hover:text-text hover:bg-surface2 transition-colors"
+            className="p-1.5 rounded-lg text-muted hover:text-text hover:bg-surface2 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Ride Snapshot */}
-        <div className="p-3 rounded-xl bg-surface2/60 border border-border/80 mb-4 space-y-2">
+        <div className="p-3 rounded-xl bg-surface2/60 border border-border/70 mb-4 space-y-1.5">
           <div className="flex items-center justify-between">
             <TransportBadge mode={ride.transport_mode} vehicleType={ride.vehicle_type} size="sm" />
             <span className="text-xs font-semibold text-accent">
               {ride.departure_time} · {ride.departure_date}
             </span>
           </div>
-          <div className="flex items-center gap-2 text-xs font-medium text-text">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-text">
             <span>{ride.origin}</span>
-            <ArrowRight className="w-3.5 h-3.5 text-muted shrink-0" />
+            <ArrowRight className="w-3 h-3 text-muted shrink-0" />
             <span>{ride.destination}</span>
           </div>
-          {ride.exam_venue && (
-            <div className="text-[11px] text-accent2 font-medium">
-              Exam Venue: {ride.exam_venue} ({ride.exam_session})
-            </div>
-          )}
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3.5">
           {/* Seats Needed */}
           <div>
-            <label className="block text-xs text-text mb-1">Seats Needed</label>
+            <label className="block text-xs font-medium text-text mb-1">Seats Needed</label>
             <select
               value={seats}
               onChange={(e) => setSeats(Number(e.target.value))}
-              className="input-field w-full text-xs"
+              className="input-field w-full text-xs py-2"
             >
               {Array.from({ length: Math.min(ride.available_seats, 4) }, (_, i) => i + 1).map((n) => (
                 <option key={n} value={n}>
@@ -86,12 +78,12 @@ export default function JoinRequestModal({
 
           {/* Pickup Landmark */}
           <div>
-            <label className="block text-xs text-text mb-1">Your Pickup Spot / Landmark</label>
+            <label className="block text-xs font-medium text-text mb-1">Pickup Spot / Landmark</label>
             <input
               type="text"
               value={landmark}
               onChange={(e) => setLandmark(e.target.value)}
-              placeholder="e.g. In front of SRM Arch Gate tea shop"
+              placeholder="e.g. SRM Arch Gate, Estancia Tower 4..."
               required
               className="input-field w-full text-xs"
             />
@@ -99,26 +91,23 @@ export default function JoinRequestModal({
 
           {/* Message */}
           <div>
-            <label className="block text-xs text-text mb-1">Short Message for Host</label>
-            <textarea
-              rows={2}
+            <label className="block text-xs font-medium text-text mb-1">Message for Host (Optional)</label>
+            <input
+              type="text"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="e.g. Heading for the same exam session! Carrying 1 bag."
-              className="input-field w-full text-xs resize-none"
+              placeholder="e.g. Carrying one small bag"
+              className="input-field w-full text-xs"
             />
           </div>
 
-          {/* Zero PII Assurance */}
-          <div className="p-3 rounded-xl bg-accent/10 border border-accent/20 flex items-start gap-2.5 text-xs text-muted">
-            <Lock className="w-4 h-4 text-accent shrink-0 mt-0.5" />
-            <p>
-              <strong>Privacy Locked:</strong> Your phone number and WhatsApp will stay hidden until the host reviews and accepts your request.
-            </p>
+          <div className="text-[11px] text-muted flex items-center gap-1.5 pt-1">
+            <ShieldCheck className="w-3.5 h-3.5 text-green shrink-0" />
+            <span>Phone & WhatsApp details are only shared once accepted.</span>
           </div>
 
           {/* Actions */}
-          <div className="pt-2 flex items-center justify-end gap-3 border-t border-border">
+          <div className="pt-2 flex items-center justify-end gap-2.5 border-t border-border/70">
             <button
               type="button"
               onClick={onClose}
@@ -130,7 +119,7 @@ export default function JoinRequestModal({
               type="submit"
               className="btn-primary text-xs py-2 px-5"
             >
-              Submit Request
+              Send Request
             </button>
           </div>
         </form>

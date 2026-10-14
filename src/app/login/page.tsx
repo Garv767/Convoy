@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ShieldCheck, Mail, ArrowRight, Car, Lock, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Mail, ArrowRight, Lock, AlertCircle, CheckCircle2, ChevronLeft } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../../lib/supabaseClient';
 
 export default function LoginPage() {
@@ -15,18 +15,20 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
 
+  const getCleanEmail = () => {
+    const trimmed = email.trim().toLowerCase();
+    return trimmed.includes('@') ? trimmed : `${trimmed}@srmist.edu.in`;
+  };
+
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setMessage('');
 
-    const trimmedEmail = email.trim().toLowerCase();
-    const finalEmail = trimmedEmail.includes('@')
-      ? trimmedEmail
-      : `${trimmedEmail}@srmist.edu.in`;
+    const finalEmail = getCleanEmail();
 
     if (!finalEmail.endsWith('@srmist.edu.in')) {
-      setError('Access restricted: Only official @srmist.edu.in student emails are permitted.');
+      setError('Please use your official @srmist.edu.in email address.');
       return;
     }
 
@@ -44,9 +46,9 @@ export default function LoginPage() {
       }
 
       setOtpSent(true);
-      setMessage(`Verification OTP sent to ${finalEmail}. Check your SRM student inbox.`);
+      setMessage(`Code sent to ${finalEmail}`);
     } catch (err: any) {
-      setError(err.message || 'Failed to send OTP. Please verify your email.');
+      setError(err.message || 'Failed to send OTP code.');
     } finally {
       setLoading(false);
     }
@@ -57,10 +59,7 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
 
-    const trimmedEmail = email.trim().toLowerCase();
-    const finalEmail = trimmedEmail.includes('@')
-      ? trimmedEmail
-      : `${trimmedEmail}@srmist.edu.in`;
+    const finalEmail = getCleanEmail();
 
     try {
       if (isSupabaseConfigured) {
@@ -74,48 +73,58 @@ export default function LoginPage() {
 
       router.push('/');
     } catch (err: any) {
-      setError(err.message || 'Invalid or expired OTP code.');
+      setError(err.message || 'Invalid or expired code.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-background">
-      {/* Background gradients */}
-      <div className="absolute top-[-10%] left-[-10%] w-[45%] h-[45%] bg-accent/20 blur-[130px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[45%] h-[45%] bg-accent2/20 blur-[130px] rounded-full pointer-events-none" />
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-background">
+      {/* Return to Home link on top left */}
+      <div className="w-full max-w-sm mb-4">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-xs text-muted hover:text-text transition-colors"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          <span>Back to Rides</span>
+        </Link>
+      </div>
 
-      <div className="card w-full max-w-md relative z-10 border-border/70 bg-surface/85 backdrop-blur-md shadow-2xl p-7">
-        {/* Header */}
+      <div className="card w-full max-w-sm bg-surface border-border/80 shadow-xl p-6 sm:p-7">
+        {/* Header with App Logo */}
         <div className="text-center mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-accent to-accent2 mx-auto flex items-center justify-center shadow-lg shadow-accent/25 mb-3">
-            <Car className="w-6 h-6 text-white" />
+          <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-accent to-accent2 p-0.5 mx-auto flex items-center justify-center shadow-md shadow-accent/20 mb-3">
+            <svg viewBox="0 0 64 64" fill="none" className="w-7 h-7">
+              <path
+                d="M48 20.5C45.5 15.5 40 12 33 12C21.4 12 12 21.4 12 33C12 44.6 21.4 54 33 54C42 54 49 48 51.5 40"
+                stroke="#FFFFFF"
+                strokeWidth="5"
+                strokeLinecap="round"
+              />
+              <path d="M25 25L41 33L25 41L29 33L25 25Z" fill="#FFFFFF" />
+              <circle cx="48" cy="20.5" r="3.5" fill="#38BDF8" />
+            </svg>
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-accent to-accent2 mb-1">
-            Convoy
+          <h1 className="text-xl font-bold tracking-tight text-text">
+            Sign in to Convoy
           </h1>
-          <p className="text-xs text-muted">
-            Verified SRMIST Campus & Exam Transit Community
+          <p className="text-xs text-muted mt-1">
+            SRM student ride sharing community
           </p>
         </div>
 
-        {/* SRM Domain Badge */}
-        <div className="mb-5 p-3 rounded-xl bg-surface2/60 border border-border flex items-center gap-2.5 text-xs text-muted">
-          <ShieldCheck className="w-4 h-4 text-green shrink-0" />
-          <span>Restricted to verified <strong>@srmist.edu.in</strong> student accounts.</span>
-        </div>
-
         {error && (
-          <div className="mb-4 p-3.5 rounded-lg bg-red/10 border-l-4 border-red text-red text-xs flex items-start gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+          <div className="mb-4 p-3 rounded-lg bg-red/10 border border-red/20 text-red text-xs flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
         {message && (
-          <div className="mb-4 p-3.5 rounded-lg bg-green/10 border-l-4 border-green text-green text-xs flex items-start gap-2">
-            <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
+          <div className="mb-4 p-3 rounded-lg bg-green/10 border border-green/20 text-green text-xs flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 shrink-0" />
             <span>{message}</span>
           </div>
         )}
@@ -123,7 +132,7 @@ export default function LoginPage() {
         {!otpSent ? (
           <form onSubmit={handleSendOtp} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-text mb-1">
+              <label className="block text-xs font-semibold text-text mb-1.5">
                 SRM NetID or Email
               </label>
               <div className="relative">
@@ -134,14 +143,14 @@ export default function LoginPage() {
                   type="text"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="e.g. ab1234 or ab1234@srmist.edu.in"
+                  placeholder="ab1234 or ab1234@srmist.edu.in"
                   required
                   disabled={loading}
                   className="input-field w-full pl-9 text-xs"
                 />
               </div>
-              <p className="text-[11px] text-muted mt-1">
-                A one-time OTP login code will be sent to your student mail.
+              <p className="text-[11px] text-muted mt-1.5">
+                We'll email a one-time login code to your student inbox.
               </p>
             </div>
 
@@ -151,10 +160,10 @@ export default function LoginPage() {
               className="btn-primary w-full text-xs py-2.5 flex items-center justify-center gap-2"
             >
               {loading ? (
-                <span>Sending OTP...</span>
+                <span>Sending code...</span>
               ) : (
                 <>
-                  <span>Send Login OTP</span>
+                  <span>Send Code</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </>
               )}
@@ -163,8 +172,8 @@ export default function LoginPage() {
         ) : (
           <form onSubmit={handleVerifyOtp} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-text mb-1">
-                Enter 6-Digit OTP Code
+              <label className="block text-xs font-semibold text-text mb-1.5">
+                6-Digit Login Code
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted">
@@ -178,7 +187,8 @@ export default function LoginPage() {
                   placeholder="123456"
                   required
                   disabled={loading}
-                  className="input-field w-full pl-9 text-center font-mono tracking-widest text-sm font-bold"
+                  autoFocus
+                  className="input-field w-full pl-9 text-center font-mono tracking-widest text-base font-bold"
                 />
               </div>
             </div>
@@ -188,7 +198,7 @@ export default function LoginPage() {
               disabled={loading}
               className="btn-primary w-full text-xs py-2.5 flex items-center justify-center gap-2"
             >
-              {loading ? 'Verifying...' : 'Verify & Enter Convoy'}
+              {loading ? 'Verifying...' : 'Continue'}
             </button>
 
             <button
@@ -197,18 +207,15 @@ export default function LoginPage() {
                 setOtpSent(false);
                 setToken('');
               }}
-              className="w-full text-center text-xs text-muted hover:text-text pt-2"
+              className="w-full text-center text-xs text-muted hover:text-text pt-1"
             >
-              Change Email / Resend Code
+              Use a different email
             </button>
           </form>
         )}
 
-        <div className="mt-6 pt-4 border-t border-border text-center text-[11px] text-muted space-y-1">
-          <p>Zero spam. Zero public PII.</p>
-          <p className="text-[10px] text-muted/70">
-            Convoy is a companion project of <Link href="https://unfugly.app" className="text-accent underline">unfugly.app</Link>
-          </p>
+        <div className="mt-6 pt-4 border-t border-border/60 text-center text-[11px] text-muted">
+          <span>Restricted to @srmist.edu.in accounts</span>
         </div>
       </div>
     </div>
