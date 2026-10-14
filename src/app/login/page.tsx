@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Mail, ArrowRight, Lock, AlertCircle, CheckCircle2, ChevronLeft } from 'lucide-react';
+import { Mail, ArrowRight, Lock, AlertCircle, CheckCircle2, ChevronLeft, ShieldCheck } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../../lib/supabaseClient';
 
 export default function LoginPage() {
@@ -80,23 +80,36 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-background">
-      {/* Return to Home link on top left */}
-      <div className="w-full max-w-sm mb-4">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-background relative overflow-hidden">
+      {/* Dynamic Background Elements (Unfugly aesthetic) */}
+      <div
+        className="absolute top-[-10%] left-[-10%] w-[45vw] h-[45vw] bg-[#1E88E5]/15 blur-[140px] rounded-full pointer-events-none animate-pulse"
+        style={{ animationDuration: '8s' }}
+      />
+      <div
+        className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-[#8b5cf6]/12 blur-[150px] rounded-full pointer-events-none animate-pulse"
+        style={{ animationDuration: '10s', animationDelay: '2s' }}
+      />
+
+      {/* Return to Home link */}
+      <div className="w-full max-w-sm mb-4 relative z-10">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-xs text-muted hover:text-text transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors cursor-pointer"
         >
           <ChevronLeft className="w-4 h-4" />
-          <span>Back to Rides</span>
+          <span>Back to Convoy</span>
         </Link>
       </div>
 
-      <div className="card w-full max-w-sm bg-surface border-border/80 shadow-xl p-6 sm:p-7">
+      <div className="w-full max-w-sm bg-[#121522]/90 backdrop-blur-2xl border border-white/[0.1] rounded-3xl p-7 shadow-2xl relative z-10 overflow-hidden">
+        {/* Top subtle gradient highlight line */}
+        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-[#1E88E5] via-[#8b5cf6] to-[#10b981]" />
+
         {/* Header with App Logo */}
         <div className="text-center mb-6">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-accent to-accent2 p-0.5 mx-auto flex items-center justify-center shadow-md shadow-accent/20 mb-3">
-            <svg viewBox="0 0 64 64" fill="none" className="w-7 h-7">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#1E88E5] via-[#6c8ef7] to-[#8b5cf6] p-0.5 mx-auto flex items-center justify-center shadow-[0_0_24px_rgba(30,136,229,0.35)] mb-3">
+            <svg viewBox="0 0 64 64" fill="none" className="w-8 h-8">
               <path
                 d="M48 20.5C45.5 15.5 40 12 33 12C21.4 12 12 21.4 12 33C12 44.6 21.4 54 33 54C42 54 49 48 51.5 40"
                 stroke="#FFFFFF"
@@ -107,23 +120,23 @@ export default function LoginPage() {
               <circle cx="48" cy="20.5" r="3.5" fill="#38BDF8" />
             </svg>
           </div>
-          <h1 className="text-xl font-bold tracking-tight text-text">
+          <h1 className="text-xl font-black tracking-tight text-white">
             Sign in to Convoy
           </h1>
-          <p className="text-xs text-muted mt-1">
-            SRM student ride sharing community
+          <p className="text-xs text-gray-400 mt-1">
+            Privacy-first SRM student ride coordination
           </p>
         </div>
 
         {error && (
-          <div className="mb-4 p-3 rounded-lg bg-red/10 border border-red/20 text-red text-xs flex items-center gap-2">
+          <div className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-300 text-xs flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
         {message && (
-          <div className="mb-4 p-3 rounded-lg bg-green/10 border border-green/20 text-green text-xs flex items-center gap-2">
+          <div className="mb-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 text-xs flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 shrink-0" />
             <span>{message}</span>
           </div>
@@ -132,11 +145,11 @@ export default function LoginPage() {
         {!otpSent ? (
           <form onSubmit={handleSendOtp} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-text mb-1.5">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">
                 SRM NetID or Email
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-500">
                   <Mail className="w-4 h-4" />
                 </div>
                 <input
@@ -146,25 +159,25 @@ export default function LoginPage() {
                   placeholder="ab1234 or ab1234@srmist.edu.in"
                   required
                   disabled={loading}
-                  className="input-field w-full pl-9 text-xs"
+                  className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
                 />
               </div>
-              <p className="text-[11px] text-muted mt-1.5">
-                We'll email a one-time login code to your student inbox.
+              <p className="text-[11px] text-gray-400 mt-1.5">
+                We'll email a one-time OTP code to your student inbox.
               </p>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full text-xs py-2.5 flex items-center justify-center gap-2"
+              className="btn-primary w-full text-xs py-3 flex items-center justify-center gap-2 shadow-lg"
             >
               {loading ? (
                 <span>Sending code...</span>
               ) : (
                 <>
-                  <span>Send Code</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <span>Send Login Code</span>
+                  <ArrowRight className="w-4 h-4" />
                 </>
               )}
             </button>
@@ -172,11 +185,11 @@ export default function LoginPage() {
         ) : (
           <form onSubmit={handleVerifyOtp} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-text mb-1.5">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">
                 6-Digit Login Code
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-500">
                   <Lock className="w-4 h-4" />
                 </div>
                 <input
@@ -188,7 +201,7 @@ export default function LoginPage() {
                   required
                   disabled={loading}
                   autoFocus
-                  className="input-field w-full pl-9 text-center font-mono tracking-widest text-base font-bold"
+                  className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl pl-10 pr-3.5 py-2.5 text-center font-mono tracking-widest text-base font-bold text-white outline-none transition-all"
                 />
               </div>
             </div>
@@ -196,7 +209,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full text-xs py-2.5 flex items-center justify-center gap-2"
+              className="btn-primary w-full text-xs py-3 flex items-center justify-center gap-2 shadow-lg"
             >
               {loading ? 'Verifying...' : 'Continue'}
             </button>
@@ -207,14 +220,15 @@ export default function LoginPage() {
                 setOtpSent(false);
                 setToken('');
               }}
-              className="w-full text-center text-xs text-muted hover:text-text pt-1"
+              className="w-full text-center text-xs text-gray-400 hover:text-white pt-1 transition-colors cursor-pointer"
             >
-              Use a different email
+              Use a different NetID
             </button>
           </form>
         )}
 
-        <div className="mt-6 pt-4 border-t border-border/60 text-center text-[11px] text-muted">
+        <div className="mt-6 pt-4 border-t border-white/[0.06] text-center text-[11px] text-gray-400 flex items-center justify-center gap-1.5">
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
           <span>Restricted to @srmist.edu.in accounts</span>
         </div>
       </div>

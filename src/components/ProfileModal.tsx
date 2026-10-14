@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, ArrowRight, X, User } from 'lucide-react';
+import { ShieldCheck, ArrowRight, X, User, Sparkles } from 'lucide-react';
 import { UserProfile, UserGender } from '../types';
 
 interface ProfileModalProps {
@@ -63,76 +63,91 @@ export default function ProfileModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/80 backdrop-blur-sm">
-      <div className="w-full sm:max-w-md bg-surface border-t sm:border border-border rounded-t-2xl sm:rounded-2xl shadow-2xl p-5 sm:p-6 max-h-[92vh] overflow-y-auto relative">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/80 backdrop-blur-md">
+      <div className="w-full sm:max-w-md bg-[#121522] border-t sm:border border-white/[0.12] rounded-t-3xl sm:rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.85)] p-6 max-h-[92vh] overflow-y-auto relative">
+        {/* Top subtle gradient highlight line */}
+        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-[#1E88E5] via-[#8b5cf6] to-[#10b981]" />
+
         {onClose && (
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-1.5 rounded-lg text-muted hover:text-text hover:bg-surface2 transition-colors"
+            className="absolute top-5 right-5 p-1.5 rounded-full text-gray-400 hover:text-white hover:bg-white/[0.08] transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         )}
 
-        <div className="text-center mb-4">
-          <div className="w-10 h-10 rounded-xl bg-accent/15 border border-accent/30 mx-auto flex items-center justify-center text-accent mb-2">
-            <ShieldCheck className="w-5 h-5 text-green" />
+        {/* Profile Header Avatar (Unfugly design style) */}
+        <div className="text-center mb-5">
+          <div className="w-14 h-14 rounded-full border-2 border-[#1E88E5] bg-gradient-to-br from-[#1E88E5]/30 to-[#8b5cf6]/20 mx-auto flex items-center justify-center text-white font-extrabold text-xl shadow-[0_0_20px_rgba(30,136,229,0.3)] mb-3">
+            {fullName ? fullName[0].toUpperCase() : 'S'}
           </div>
-          <h2 className="text-lg font-bold text-text">
-            {isEditing ? 'Edit Profile' : 'Profile Setup'}
-          </h2>
-          <p className="text-xs text-muted">
-            Signed in as <span className="font-mono text-accent">{userEmail}</span>
+          <div className="flex items-center justify-center gap-1.5">
+            <h2 className="text-lg font-bold text-white tracking-tight">
+              {isEditing ? 'Edit Profile' : 'Student Profile Setup'}
+            </h2>
+            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+          </div>
+          <p className="text-xs text-gray-400 mt-0.5">
+            Verified as <span className="font-mono text-[#60a5fa]">{userEmail}</span>
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3.5">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-text mb-1">Full Name</label>
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">
+              Full Name
+            </label>
             <input
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              placeholder="e.g. John Doe"
+              placeholder="e.g. Garv Rahut"
               required
-              className="input-field w-full text-xs"
+              className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-text mb-1">Phone Number</label>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">
+                Phone Number
+              </label>
               <input
                 type="tel"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 placeholder="+91 9876543210"
                 required
-                className="input-field w-full text-xs"
+                className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all font-mono"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-text mb-1">WhatsApp</label>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">
+                WhatsApp
+              </label>
               <input
                 type="tel"
                 value={whatsappNumber}
                 onChange={(e) => setWhatsappNumber(e.target.value)}
                 placeholder="Same as phone"
-                className="input-field w-full text-xs"
+                className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all font-mono"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-text mb-1">Gender</label>
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">
+              Gender
+            </label>
             <div className="grid grid-cols-3 gap-2">
               <button
                 type="button"
                 onClick={() => setGender('male')}
-                className={`py-2 px-2 rounded-lg text-xs font-medium border text-center transition-all ${
+                className={`py-2 px-2 rounded-xl text-xs font-semibold border text-center transition-all cursor-pointer ${
                   gender === 'male'
-                    ? 'border-accent bg-accent/20 text-accent font-bold'
-                    : 'border-border bg-surface2 text-muted'
+                    ? 'border-[#1E88E5] bg-[#1E88E5]/20 text-[#60a5fa] shadow-[0_0_12px_rgba(30,136,229,0.25)]'
+                    : 'border-white/[0.08] bg-[#0c0e17] text-gray-400 hover:text-white'
                 }`}
               >
                 Male
@@ -140,10 +155,10 @@ export default function ProfileModal({
               <button
                 type="button"
                 onClick={() => setGender('female')}
-                className={`py-2 px-2 rounded-lg text-xs font-medium border text-center transition-all ${
+                className={`py-2 px-2 rounded-xl text-xs font-semibold border text-center transition-all cursor-pointer ${
                   gender === 'female'
-                    ? 'border-accent2 bg-accent2/20 text-accent2 font-bold'
-                    : 'border-border bg-surface2 text-muted'
+                    ? 'border-[#8b5cf6] bg-[#8b5cf6]/20 text-[#c084fc] shadow-[0_0_12px_rgba(139,92,246,0.25)]'
+                    : 'border-white/[0.08] bg-[#0c0e17] text-gray-400 hover:text-white'
                 }`}
               >
                 Female
@@ -151,10 +166,10 @@ export default function ProfileModal({
               <button
                 type="button"
                 onClick={() => setGender('other')}
-                className={`py-2 px-2 rounded-lg text-xs font-medium border text-center transition-all ${
+                className={`py-2 px-2 rounded-xl text-xs font-semibold border text-center transition-all cursor-pointer ${
                   gender === 'other'
-                    ? 'border-green bg-green/20 text-green font-bold'
-                    : 'border-border bg-surface2 text-muted'
+                    ? 'border-emerald-500 bg-emerald-500/20 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.25)]'
+                    : 'border-white/[0.08] bg-[#0c0e17] text-gray-400 hover:text-white'
                 }`}
               >
                 Other
@@ -162,24 +177,28 @@ export default function ProfileModal({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-text mb-1">Department</label>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">
+                Department
+              </label>
               <input
                 type="text"
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
                 placeholder="e.g. B.Tech CSE"
                 required
-                className="input-field w-full text-xs"
+                className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-text mb-1">Year of Study</label>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">
+                Year of Study
+              </label>
               <select
                 value={yearOfStudy}
                 onChange={(e) => setYearOfStudy(Number(e.target.value))}
-                className="input-field w-full text-xs py-2"
+                className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none transition-all cursor-pointer"
               >
                 <option value={1}>1st Year</option>
                 <option value={2}>2nd Year</option>
@@ -190,18 +209,18 @@ export default function ProfileModal({
             </div>
           </div>
 
-          <div className="text-[11px] text-muted flex items-center gap-1.5 pt-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-green shrink-0" />
-            <span>Contact details are only revealed upon confirmed ride matches.</span>
+          <div className="text-[11px] text-gray-400 flex items-center gap-2 pt-1 bg-white/[0.02] p-2.5 rounded-xl border border-white/[0.05]">
+            <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span>Zero-PII guarantee: contact numbers unlock only upon bilateral match acceptance.</span>
           </div>
 
           <button
             type="submit"
             disabled={isSubmitting}
-            className="btn-primary w-full text-xs py-2.5 flex items-center justify-center gap-2 mt-2"
+            className="btn-primary w-full text-xs py-3 flex items-center justify-center gap-2 mt-2 shadow-lg"
           >
-            {isSubmitting ? 'Saving...' : isEditing ? 'Save Changes' : 'Save & Continue'}
-            <ArrowRight className="w-3.5 h-3.5" />
+            <span>{isSubmitting ? 'Saving...' : isEditing ? 'Save Changes' : 'Complete Setup & Continue'}</span>
+            <ArrowRight className="w-4 h-4" />
           </button>
         </form>
       </div>

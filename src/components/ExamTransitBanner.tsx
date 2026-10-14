@@ -1,5 +1,5 @@
 import React from 'react';
-import { GraduationCap, Search, Plus } from 'lucide-react';
+import { GraduationCap, Search, Plus, Sparkles, MapPin } from 'lucide-react';
 import { ExamSession } from '../types';
 
 interface ExamTransitBannerProps {
@@ -18,83 +18,98 @@ export default function ExamTransitBanner({
   onPostExamRide,
 }: ExamTransitBannerProps) {
   return (
-    <div className="card mb-5 border-accent2/30 bg-surface p-4 sm:p-5">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3.5">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-accent2/15 border border-accent2/30 text-accent2 flex items-center justify-center shrink-0">
-            <GraduationCap className="w-4 h-4" />
-          </div>
-          <div>
-            <h1 className="text-base sm:text-lg font-bold text-text">NPTEL Exam Transit</h1>
-            <p className="text-xs text-muted">Pool autos, cabs & transit to your NPTEL center</p>
-          </div>
-        </div>
+    <div className="relative mb-6 rounded-2xl sm:rounded-3xl bg-[#121522]/90 backdrop-blur-xl border border-white/[0.08] shadow-xl overflow-hidden">
+      {/* Top Gradient Highlight Accent Line */}
+      <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-[#1E88E5] via-[#8b5cf6] to-[#10b981]" />
 
-        <button
-          onClick={onPostExamRide}
-          className="btn-primary bg-accent2 hover:bg-accent2/80 text-xs py-2 px-3.5 gap-1.5 self-start sm:self-auto shrink-0 shadow-sm"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          <span>Post Ride</span>
-        </button>
-      </div>
+      <div className="p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+          <div className="flex items-start sm:items-center gap-3">
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br from-[#8b5cf6]/20 to-[#1E88E5]/20 border border-[#8b5cf6]/30 text-[#a78bfa] flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(139,92,246,0.15)]">
+              <GraduationCap className="w-5 h-5 text-[#a78bfa]" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                  NPTEL & Exam Transit
+                </h1>
+                <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-[#1E88E5]/15 text-[#60a5fa] border border-[#1E88E5]/30">
+                  <Sparkles className="w-2.5 h-2.5" />
+                  SRM Verified
+                </span>
+              </div>
+              <p className="text-xs text-gray-400 mt-0.5">
+                Pool autos, cabs, and EMU trains to off-campus centers with SRM students
+              </p>
+            </div>
+          </div>
 
-      {/* Filter Row: Shift Selector + Center Search */}
-      <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 pt-3 border-t border-border">
-        {/* Shift Selector */}
-        <div className="sm:col-span-5 flex items-center gap-1 bg-surface2 p-1 rounded-xl border border-border">
           <button
-            onClick={() => setSelectedSession('all')}
-            className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold transition-all ${
-              selectedSession === 'all'
-                ? 'bg-accent2 text-white shadow-sm'
-                : 'text-muted hover:text-text'
-            }`}
+            onClick={onPostExamRide}
+            className="btn-primary self-start sm:self-auto text-xs py-2 px-4 gap-1.5 shrink-0 shadow-lg"
           >
-            All Shifts
-          </button>
-          <button
-            onClick={() => setSelectedSession('FN')}
-            className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold transition-all ${
-              selectedSession === 'FN'
-                ? 'bg-accent2 text-white shadow-sm'
-                : 'text-muted hover:text-text'
-            }`}
-          >
-            FN (9 AM)
-          </button>
-          <button
-            onClick={() => setSelectedSession('AN')}
-            className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold transition-all ${
-              selectedSession === 'AN'
-                ? 'bg-accent2 text-white shadow-sm'
-                : 'text-muted hover:text-text'
-            }`}
-          >
-            AN (2 PM)
+            <Plus className="w-4 h-4" />
+            <span>Post Ride</span>
           </button>
         </div>
 
-        {/* Center Search */}
-        <div className="sm:col-span-7 relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted">
-            <Search className="w-4 h-4" />
-          </div>
-          <input
-            type="text"
-            value={venueSearch}
-            onChange={(e) => setVenueSearch(e.target.value)}
-            placeholder="Search exam center (e.g. Chengalpattu, Ambattur)..."
-            className="input-field w-full pl-9 text-xs py-2"
-          />
-          {venueSearch && (
+        {/* Filter Controls Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-3 border-t border-white/[0.06]">
+          {/* Shift Segmented Toggle */}
+          <div className="sm:col-span-5 flex items-center gap-1 bg-[#0c0e17] p-1 rounded-xl border border-white/[0.08]">
             <button
-              onClick={() => setVenueSearch('')}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-xs text-muted hover:text-text"
+              onClick={() => setSelectedSession('all')}
+              className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold transition-all ${
+                selectedSession === 'all'
+                  ? 'bg-[#1E88E5] text-white shadow-[0_0_15px_rgba(30,136,229,0.35)]'
+                  : 'text-gray-400 hover:text-white hover:bg-white/[0.04]'
+              }`}
             >
-              Clear
+              All Shifts
             </button>
-          )}
+            <button
+              onClick={() => setSelectedSession('FN')}
+              className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold transition-all ${
+                selectedSession === 'FN'
+                  ? 'bg-[#8b5cf6] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
+                  : 'text-gray-400 hover:text-white hover:bg-white/[0.04]'
+              }`}
+            >
+              FN (9 AM)
+            </button>
+            <button
+              onClick={() => setSelectedSession('AN')}
+              className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold transition-all ${
+                selectedSession === 'AN'
+                  ? 'bg-[#8b5cf6] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
+                  : 'text-gray-400 hover:text-white hover:bg-white/[0.04]'
+              }`}
+            >
+              AN (2 PM)
+            </button>
+          </div>
+
+          {/* Center Search Input */}
+          <div className="sm:col-span-7 relative">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-500">
+              <Search className="w-4 h-4" />
+            </div>
+            <input
+              type="text"
+              value={venueSearch}
+              onChange={(e) => setVenueSearch(e.target.value)}
+              placeholder="Search center (e.g. SRM Tech Park, Chengalpattu, Ambattur)..."
+              className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl pl-9 pr-14 text-xs py-2.5 text-white placeholder-gray-500 transition-all outline-none"
+            />
+            {venueSearch && (
+              <button
+                onClick={() => setVenueSearch('')}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-xs text-gray-400 hover:text-white font-medium"
+              >
+                Clear
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

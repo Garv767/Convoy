@@ -41,6 +41,8 @@ import {
   RefreshCw,
   AlertCircle,
   KeyRound,
+  Compass,
+  Sparkles,
 } from 'lucide-react';
 
 export default function Home() {
@@ -316,7 +318,20 @@ export default function Home() {
   ).length;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col relative overflow-x-hidden">
+      {/* Dynamic Ambient Background Glows */}
+      <div
+        className="fixed top-[-10%] left-[-10%] w-[45vw] h-[45vw] bg-[#1E88E5]/10 blur-[140px] rounded-full pointer-events-none animate-pulse"
+        style={{ animationDuration: '9s' }}
+      />
+      <div
+        className="fixed top-[30%] right-[-10%] w-[40vw] h-[40vw] bg-[#8b5cf6]/10 blur-[150px] rounded-full pointer-events-none animate-pulse"
+        style={{ animationDuration: '11s', animationDelay: '2s' }}
+      />
+      <div
+        className="fixed bottom-[-10%] left-[20%] w-[40vw] h-[30vw] bg-[#10b981]/5 blur-[160px] rounded-full pointer-events-none"
+      />
+
       {/* Top Navigation */}
       <Navbar
         activeTab={activeTab}
@@ -330,7 +345,7 @@ export default function Home() {
 
       {/* Supabase Connection Notice if anon key not added */}
       {!isSupabaseConfigured && (
-        <div className="bg-yellow/10 border-b border-yellow/20 px-4 py-2 text-xs text-yellow">
+        <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 py-2 text-xs text-amber-300">
           <div className="flex items-center gap-2 max-w-7xl mx-auto w-full">
             <KeyRound className="w-4 h-4 shrink-0" />
             <span>
@@ -341,7 +356,7 @@ export default function Home() {
       )}
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24 md:pb-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-7 pb-24 md:pb-10 relative z-10">
         {activeTab === 'my-rides' ? (
           currentUser ? (
             <MyRidesView
@@ -361,16 +376,16 @@ export default function Home() {
               }}
             />
           ) : (
-            <div className="card text-center py-12 max-w-sm mx-auto my-8">
-              <div className="w-10 h-10 rounded-full bg-accent/15 text-accent flex items-center justify-center mx-auto mb-3">
-                <ShieldCheck className="w-5 h-5 text-green" />
+            <div className="rounded-3xl bg-[#121522]/90 backdrop-blur-xl border border-white/[0.08] text-center py-14 px-6 max-w-md mx-auto my-10 shadow-2xl">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1E88E5]/20 to-[#8b5cf6]/20 border border-[#1E88E5]/30 text-[#1E88E5] flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(30,136,229,0.2)]">
+                <ShieldCheck className="w-6 h-6 text-emerald-400" />
               </div>
-              <h2 className="text-base font-bold text-text mb-1">Sign in to View Activity</h2>
-              <p className="text-xs text-muted mb-5">
-                Use your @srmist.edu.in account to view requests and host activity.
+              <h2 className="text-lg font-bold text-white mb-2">Student Activity Hub</h2>
+              <p className="text-xs text-gray-400 leading-relaxed mb-6 max-w-xs mx-auto">
+                Sign in with your verified <span className="text-[#60a5fa] font-mono">@srmist.edu.in</span> account to manage incoming passenger requests and coordinate rides.
               </p>
-              <Link href="/login" className="btn-primary text-xs py-2 px-5 mx-auto inline-flex">
-                Sign In
+              <Link href="/login" className="btn-primary text-xs py-2.5 px-6 mx-auto inline-flex shadow-lg">
+                Sign In with SRM Mail
               </Link>
             </div>
           )
@@ -385,82 +400,83 @@ export default function Home() {
               onPostExamRide={() => setIsCreateModalOpen(true)}
             />
 
-            {/* Mode of Transport Carousel & Ride Count */}
-            <div className="mb-4 sm:mb-5 flex items-center justify-between gap-2">
-              <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto py-1 w-full">
+            {/* Mode of Transport Pills & Live Count */}
+            <div className="mb-5 sm:mb-6 flex items-center justify-between gap-3">
+              <div className="no-scrollbar flex items-center gap-2 overflow-x-auto py-1 w-full">
                 <button
                   onClick={() => setSelectedMode('all')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all shrink-0 ${
+                  className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 shrink-0 cursor-pointer ${
                     selectedMode === 'all'
-                      ? 'bg-accent text-white shadow-sm'
-                      : 'bg-surface2 text-muted hover:text-text border border-border'
+                      ? 'bg-gradient-to-r from-[#1E88E5] to-[#3b82f6] text-white shadow-[0_0_20px_rgba(30,136,229,0.35)]'
+                      : 'bg-[#121522]/90 backdrop-blur-md text-gray-400 hover:text-white border border-white/[0.08] hover:border-white/20 hover:bg-[#1a1e2d]'
                   }`}
                 >
                   All Modes
                 </button>
                 <button
                   onClick={() => setSelectedMode('cab')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all shrink-0 ${
+                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 shrink-0 cursor-pointer ${
                     selectedMode === 'cab'
-                      ? 'bg-yellow/20 text-yellow border border-yellow/40 shadow-sm'
-                      : 'bg-surface2 text-muted hover:text-text border border-border'
+                      ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.25)]'
+                      : 'bg-[#121522]/90 backdrop-blur-md text-gray-400 hover:text-white border border-white/[0.08] hover:border-white/20 hover:bg-[#1a1e2d]'
                   }`}
                 >
-                  <CarTaxiFront className="w-3.5 h-3.5" />
+                  <CarTaxiFront className="w-3.5 h-3.5 text-amber-400" />
                   <span>Auto / Cab</span>
                 </button>
                 <button
                   onClick={() => setSelectedMode('bus')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all shrink-0 ${
+                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 shrink-0 cursor-pointer ${
                     selectedMode === 'bus'
-                      ? 'bg-accent/20 text-accent border border-accent/40 shadow-sm'
-                      : 'bg-surface2 text-muted hover:text-text border border-border'
+                      ? 'bg-blue-500/20 text-blue-300 border border-blue-500/50 shadow-[0_0_20px_rgba(59,130,246,0.25)]'
+                      : 'bg-[#121522]/90 backdrop-blur-md text-gray-400 hover:text-white border border-white/[0.08] hover:border-white/20 hover:bg-[#1a1e2d]'
                   }`}
                 >
-                  <Bus className="w-3.5 h-3.5" />
+                  <Bus className="w-3.5 h-3.5 text-blue-400" />
                   <span>Bus</span>
                 </button>
                 <button
                   onClick={() => setSelectedMode('train')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all shrink-0 ${
+                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 shrink-0 cursor-pointer ${
                     selectedMode === 'train'
-                      ? 'bg-accent2/20 text-accent2 border border-accent2/40 shadow-sm'
-                      : 'bg-surface2 text-muted hover:text-text border border-border'
+                      ? 'bg-purple-500/20 text-purple-300 border border-purple-500/50 shadow-[0_0_20px_rgba(168,85,247,0.25)]'
+                      : 'bg-[#121522]/90 backdrop-blur-md text-gray-400 hover:text-white border border-white/[0.08] hover:border-white/20 hover:bg-[#1a1e2d]'
                   }`}
                 >
-                  <TrainFront className="w-3.5 h-3.5" />
+                  <TrainFront className="w-3.5 h-3.5 text-purple-400" />
                   <span>Train</span>
                 </button>
                 <button
                   onClick={() => setSelectedMode('private_vehicle')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all shrink-0 ${
+                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 shrink-0 cursor-pointer ${
                     selectedMode === 'private_vehicle'
-                      ? 'bg-green/20 text-green border border-green/40 shadow-sm'
-                      : 'bg-surface2 text-muted hover:text-text border border-border'
+                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.25)]'
+                      : 'bg-[#121522]/90 backdrop-blur-md text-gray-400 hover:text-white border border-white/[0.08] hover:border-white/20 hover:bg-[#1a1e2d]'
                   }`}
                 >
-                  <Bike className="w-3.5 h-3.5" />
+                  <Bike className="w-3.5 h-3.5 text-emerald-400" />
                   <span>Two-Wheeler</span>
                 </button>
               </div>
 
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2.5 shrink-0">
                 <button
                   onClick={loadRides}
-                  className="p-1.5 rounded-lg bg-surface2 border border-border text-muted hover:text-text text-xs flex items-center gap-1"
+                  className="p-2 rounded-full bg-[#121522]/90 border border-white/[0.08] text-gray-400 hover:text-white hover:border-white/25 text-xs flex items-center justify-center transition-all cursor-pointer"
                   title="Refresh rides"
                 >
-                  <RefreshCw className={`w-3.5 h-3.5 ${loadingRides ? 'animate-spin text-accent' : ''}`} />
+                  <RefreshCw className={`w-3.5 h-3.5 ${loadingRides ? 'animate-spin text-[#1E88E5]' : ''}`} />
                 </button>
-                <span className="hidden sm:inline text-xs text-muted font-medium whitespace-nowrap">
-                  {filteredRides.length} {filteredRides.length === 1 ? 'ride' : 'rides'}
-                </span>
+                <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#121522]/90 border border-white/[0.08] text-xs font-medium text-gray-300">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>{filteredRides.length} {filteredRides.length === 1 ? 'ride' : 'rides'}</span>
+                </div>
               </div>
             </div>
 
             {/* Error banner if query failed */}
             {errorMsg && (
-              <div className="mb-4 p-3 rounded-xl bg-red/10 border border-red/20 text-red text-xs flex items-center gap-2">
+              <div className="mb-4 p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <span>{errorMsg}</span>
               </div>
@@ -468,18 +484,39 @@ export default function Home() {
 
             {/* Ride Cards Grid */}
             {loadingRides ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
                 {[1, 2, 3].map((n) => (
-                  <div key={n} className="card animate-pulse h-44 bg-surface/50 border-border/50" />
+                  <div
+                    key={n}
+                    className="rounded-2xl bg-[#121522]/80 border border-white/[0.06] p-5 h-64 animate-pulse flex flex-col justify-between"
+                  >
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <div className="w-24 h-6 rounded-full bg-white/[0.06]" />
+                        <div className="w-20 h-6 rounded-full bg-white/[0.06]" />
+                      </div>
+                      <div className="space-y-3 pt-2">
+                        <div className="w-3/4 h-4 rounded bg-white/[0.06]" />
+                        <div className="w-1/2 h-4 rounded bg-white/[0.06]" />
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="w-full h-8 rounded-xl bg-white/[0.04]" />
+                      <div className="w-full h-9 rounded-full bg-white/[0.06]" />
+                    </div>
+                  </div>
                 ))}
               </div>
             ) : filteredRides.length === 0 ? (
-              <div className="card text-center py-12 border-dashed border-border my-4">
-                <p className="text-sm font-semibold text-text mb-1">
-                  No rides posted yet for this center or shift
-                </p>
-                <p className="text-xs text-muted mb-4">
-                  Heading to an exam center? Post your ride and pool with peers!
+              <div className="rounded-3xl bg-[#121522]/70 backdrop-blur-xl border border-dashed border-white/[0.12] text-center py-16 px-6 my-6 shadow-xl">
+                <div className="w-14 h-14 rounded-2xl bg-[#1E88E5]/10 border border-[#1E88E5]/20 text-[#60a5fa] flex items-center justify-center mx-auto mb-4">
+                  <Compass className="w-7 h-7" />
+                </div>
+                <h3 className="text-base font-bold text-white mb-1.5">
+                  No active rides found for this route or shift
+                </h3>
+                <p className="text-xs text-gray-400 max-w-sm mx-auto mb-6 leading-relaxed">
+                  Heading to an exam center or traveling back from campus? Form your convoy and split the commute with classmates.
                 </p>
                 <button
                   onClick={() => {
@@ -489,14 +526,14 @@ export default function Home() {
                       setIsCreateModalOpen(true);
                     }
                   }}
-                  className="btn-primary text-xs py-2 px-4 gap-1.5 mx-auto"
+                  className="btn-primary text-xs py-2.5 px-6 gap-2 shadow-lg"
                 >
-                  <Plus className="w-3.5 h-3.5" />
-                  Post Ride
+                  <Plus className="w-4 h-4" />
+                  <span>Post the First Ride</span>
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
                 {filteredRides.map((ride) => {
                   const existingReq = requests.find(
                     (r) => r.ride_id === ride.id && r.passenger_id === currentUser?.id
@@ -527,9 +564,16 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="hidden md:block mt-auto border-t border-border py-4 text-xs text-muted">
+      <footer className="hidden md:block mt-auto border-t border-white/[0.06] py-5 text-xs text-gray-500 relative z-10 bg-[#090b11]/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
-          <span className="font-semibold text-text">Convoy</span>
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-gray-300">Convoy</span>
+            <span className="text-gray-600">·</span>
+            <span>Privacy-First SRM Transit Coordination</span>
+          </div>
+          <span className="font-mono text-[11px] text-gray-600">
+            convoy.unfugly.app
+          </span>
         </div>
       </footer>
 

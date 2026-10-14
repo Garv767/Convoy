@@ -8,6 +8,9 @@ import {
   ArrowRight,
   Plus,
   Edit3,
+  Users,
+  MapPin,
+  Sparkles,
 } from 'lucide-react';
 import { RideListing, RideRequest, UserProfile } from '../types';
 import TransportBadge from './TransportBadge';
@@ -47,59 +50,70 @@ export default function MyRidesView({
   );
 
   return (
-    <div className="space-y-6 sm:space-y-8">
-      {/* Profile Overview Card with Edit Profile */}
-      <div className="card p-4 sm:p-5 border-border bg-surface flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-xl bg-accent/15 border border-accent/30 text-accent font-bold text-lg flex items-center justify-center shrink-0">
-            {currentUser.full_name ? currentUser.full_name[0].toUpperCase() : 'U'}
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-base sm:text-lg font-bold text-text">
-                {currentUser.full_name}
-              </h2>
-              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-green bg-green/10 border border-green/30 px-2 py-0.5 rounded-md">
-                <ShieldCheck className="w-3 h-3" />
-                Verified
-              </span>
-            </div>
-            <p className="text-xs text-muted flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
-              <span>{currentUser.user_net_id}@srmist.edu.in</span>
-              <span className="text-muted/40">·</span>
-              <span>{currentUser.department}</span>
-              <span className="text-muted/40">·</span>
-              <span>Year {currentUser.year_of_study}</span>
-              {currentUser.phone_number && (
-                <>
-                  <span className="text-muted/40">·</span>
-                  <span className="font-mono">{currentUser.phone_number}</span>
-                </>
-              )}
-            </p>
-          </div>
-        </div>
+    <div className="space-y-7 sm:space-y-9">
+      {/* Student Profile Card (Unfugly design style) */}
+      <div className="relative rounded-3xl bg-[#121522]/90 backdrop-blur-xl border border-white/[0.08] p-5 sm:p-6 shadow-xl overflow-hidden">
+        {/* Top subtle highlight gradient */}
+        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-[#1E88E5] via-[#8b5cf6] to-[#10b981]" />
 
-        {onEditProfile && (
-          <button
-            onClick={onEditProfile}
-            className="btn-secondary text-xs py-2 px-3.5 gap-1.5 flex items-center self-start sm:self-auto shrink-0 cursor-pointer"
-          >
-            <Edit3 className="w-3.5 h-3.5 text-accent" />
-            <span>Edit Profile</span>
-          </button>
-        )}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            {/* Circular Profile Avatar */}
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-[#1E88E5] bg-gradient-to-br from-[#1E88E5]/30 to-[#8b5cf6]/20 text-white font-black text-xl sm:text-2xl flex items-center justify-center shrink-0 shadow-[0_0_24px_rgba(30,136,229,0.35)]">
+              {currentUser.full_name ? currentUser.full_name[0].toUpperCase() : 'U'}
+            </div>
+
+            <div>
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                  {currentUser.full_name}
+                </h2>
+                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-0.5 rounded-full shadow-[0_0_12px_rgba(16,185,129,0.15)]">
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  Verified SRM Student
+                </span>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 mt-2 text-xs">
+                <span className="font-mono text-[#60a5fa] bg-[#1E88E5]/10 border border-[#1E88E5]/25 px-2.5 py-0.5 rounded-full">
+                  {currentUser.user_net_id}@srmist.edu.in
+                </span>
+                <span className="text-gray-400 bg-white/[0.05] border border-white/[0.08] px-2.5 py-0.5 rounded-full">
+                  {currentUser.department}
+                </span>
+                <span className="text-gray-400 bg-white/[0.05] border border-white/[0.08] px-2.5 py-0.5 rounded-full">
+                  Year {currentUser.year_of_study}
+                </span>
+                {currentUser.phone_number && (
+                  <span className="font-mono text-gray-300 bg-white/[0.05] border border-white/[0.08] px-2.5 py-0.5 rounded-full">
+                    {currentUser.phone_number}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {onEditProfile && (
+            <button
+              onClick={onEditProfile}
+              className="btn-secondary text-xs py-2 px-4 gap-1.5 flex items-center self-start sm:self-auto shrink-0 shadow-md cursor-pointer"
+            >
+              <Edit3 className="w-3.5 h-3.5 text-[#1E88E5]" />
+              <span>Edit Profile</span>
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* SECTION 1: INCOMING REQUESTS */}
+      {/* SECTION 1: INCOMING PASSENGER REQUESTS */}
       <section>
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <h2 className="text-base sm:text-lg font-bold text-text">
-              Incoming Requests
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2.5">
+            <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
+              Incoming Passenger Requests
             </h2>
             {incomingRequests.length > 0 && (
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-accent text-white">
+              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#1E88E5] text-white shadow-[0_0_12px_rgba(30,136,229,0.4)]">
                 {incomingRequests.length}
               </span>
             )}
@@ -107,101 +121,108 @@ export default function MyRidesView({
         </div>
 
         {incomingRequests.length === 0 ? (
-          <div className="p-6 text-center rounded-xl bg-surface/60 border border-border text-muted text-xs">
+          <div className="p-8 text-center rounded-2xl bg-[#121522]/60 border border-white/[0.06] text-gray-400 text-xs">
             No incoming passenger requests at the moment.
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {incomingRequests.map((req) => {
               const targetRide = hostedRides.find((r) => r.id === req.ride_id);
               return (
                 <div
                   key={req.id}
-                  className="card border-border bg-surface flex flex-col justify-between p-4"
+                  className="rounded-2xl bg-[#121522]/90 backdrop-blur-xl border border-white/[0.08] hover:border-[#1E88E5]/30 p-5 shadow-lg flex flex-col justify-between transition-all"
                 >
                   <div>
-                    {/* Header: Passenger snapshot */}
-                    <div className="flex items-start justify-between gap-2 mb-2.5">
-                      <div>
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-sm font-semibold text-text">
-                            {req.passenger_name}
-                          </span>
-                          <ShieldCheck className="w-3.5 h-3.5 text-green" />
+                    {/* Header: Passenger Identity */}
+                    <div className="flex items-start justify-between gap-2 mb-3">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#1E88E5]/30 to-[#8b5cf6]/20 border border-[#1E88E5]/40 flex items-center justify-center text-xs font-bold text-white">
+                          {req.passenger_name ? req.passenger_name[0].toUpperCase() : 'P'}
                         </div>
-                        <p className="text-xs text-muted">
-                          {req.passenger_gender ? `${req.passenger_gender.toUpperCase()} · ` : ''}
-                          {req.passenger_department || 'SRMIST'}
-                        </p>
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-sm font-bold text-white">
+                              {req.passenger_name}
+                            </span>
+                            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                          </div>
+                          <p className="text-xs text-gray-400">
+                            {req.passenger_gender ? `${req.passenger_gender.toUpperCase()} · ` : ''}
+                            {req.passenger_department || 'SRMIST'}
+                          </p>
+                        </div>
                       </div>
 
                       <span
-                        className={`text-[11px] font-semibold px-2 py-0.5 rounded-md ${
+                        className={`text-[11px] font-semibold px-2.5 py-1 rounded-full border ${
                           req.status === 'accepted'
-                            ? 'bg-green/15 text-green border border-green/30'
+                            ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
                             : req.status === 'rejected'
-                            ? 'bg-red/15 text-red border border-red/30'
-                            : 'bg-yellow/15 text-yellow border border-yellow/30'
+                            ? 'bg-rose-500/15 text-rose-400 border-rose-500/30'
+                            : 'bg-amber-500/15 text-amber-400 border-amber-500/30'
                         }`}
                       >
                         {req.status === 'accepted' ? 'Accepted' : req.status === 'rejected' ? 'Declined' : 'Pending'}
                       </span>
                     </div>
 
-                    {/* Ride Context */}
+                    {/* Ride Context Inset */}
                     {targetRide && (
-                      <div className="p-2 rounded-lg bg-surface2/60 border border-border text-xs mb-2.5">
-                        <div className="flex items-center justify-between text-muted mb-0.5">
-                          <span>Route:</span>
-                          <span className="text-text font-medium">
+                      <div className="p-3 rounded-xl bg-[#0c0e17] border border-white/[0.06] text-xs mb-3 space-y-1">
+                        <div className="flex items-center justify-between text-gray-400">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">Route:</span>
+                          <span className="text-white font-semibold">
                             {targetRide.origin} ➔ {targetRide.destination}
                           </span>
                         </div>
-                        <div className="flex items-center justify-between text-[11px] text-muted">
-                          <span>Departure: {targetRide.departure_time}</span>
-                          <span>{req.seats_requested} seat(s)</span>
+                        <div className="flex items-center justify-between text-[11px] text-gray-400 pt-0.5">
+                          <span>Departs: <strong className="text-gray-200">{targetRide.departure_time}</strong></span>
+                          <span className="font-mono text-[#60a5fa]">{req.seats_requested} seat(s) requested</span>
                         </div>
                       </div>
                     )}
 
                     {/* Landmark & Message */}
                     {req.pickup_landmark && (
-                      <p className="text-xs text-text mb-1.5">
-                        <span className="text-muted">Pickup: </span>
+                      <p className="text-xs text-gray-300 mb-2">
+                        <span className="text-gray-500 font-semibold uppercase text-[10px] tracking-wider block">Pickup Spot:</span>
                         {req.pickup_landmark}
                       </p>
                     )}
                     {req.message && (
-                      <p className="text-xs text-muted/90 bg-surface2/30 px-2 py-1.5 rounded border border-border/40 mb-3">
-                        "{req.message}"
+                      <p className="text-xs text-gray-400 italic bg-white/[0.02] p-2.5 rounded-lg border border-white/[0.05] mb-3">
+                        &ldquo;{req.message}&rdquo;
                       </p>
                     )}
                   </div>
 
                   {/* Actions / Contact Reveal */}
-                  <div className="pt-2.5 border-t border-border">
+                  <div className="pt-3 border-t border-white/[0.08]">
                     {req.status === 'pending' ? (
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-2 gap-2.5">
                         <button
                           onClick={() => onRejectRequest(req.id)}
-                          className="py-1.5 px-3 rounded-lg border border-red/40 hover:bg-red/10 text-red text-xs font-medium flex items-center justify-center gap-1.5 transition-colors"
+                          className="py-2 px-3 rounded-full border border-rose-500/30 hover:bg-rose-500/10 text-rose-400 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                         >
                           <XCircle className="w-3.5 h-3.5" />
                           Decline
                         </button>
                         <button
                           onClick={() => onAcceptRequest(req.id)}
-                          className="py-1.5 px-3 rounded-lg bg-green hover:bg-green/90 text-black text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm"
+                          className="py-2 px-3 rounded-full bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] cursor-pointer"
                         >
                           <CheckCircle className="w-3.5 h-3.5" />
-                          Accept
+                          Accept & Unlock
                         </button>
                       </div>
                     ) : req.status === 'accepted' ? (
                       <div className="space-y-2">
-                        <div className="flex items-center justify-between text-xs text-text">
-                          <span className="text-muted">Phone:</span>
-                          <span className="font-mono">{req.passenger_phone || '+91 98765 43210'}</span>
+                        <div className="flex items-center justify-between text-xs text-white">
+                          <span className="text-gray-400">Passenger Phone:</span>
+                          <span className="font-mono font-bold text-emerald-400">
+                            {req.passenger_phone || '+91 98765 43210'}
+                          </span>
                         </div>
                         {req.passenger_whatsapp && (
                           <a
@@ -210,15 +231,15 @@ export default function MyRidesView({
                             )}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-full py-1.5 px-3 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-black text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                            className="w-full py-2 px-3 rounded-full bg-[#25D366] hover:bg-[#20ba59] text-black text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-[0_0_15px_rgba(37,211,102,0.3)]"
                           >
-                            <MessageCircle className="w-3.5 h-3.5" />
+                            <MessageCircle className="w-4 h-4 fill-black text-transparent" />
                             WhatsApp Passenger
                           </a>
                         )}
                       </div>
                     ) : (
-                      <p className="text-xs text-red text-center">Request declined</p>
+                      <p className="text-xs text-rose-400 text-center font-medium">Request declined</p>
                     )}
                   </div>
                 </div>
@@ -230,13 +251,13 @@ export default function MyRidesView({
 
       {/* SECTION 2: MY OUTGOING REQUESTS */}
       <section>
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <h2 className="text-base sm:text-lg font-bold text-text">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2.5">
+            <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
               Your Sent Requests
             </h2>
             {outgoingRequests.length > 0 && (
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-surface2 border border-border text-muted">
+              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-white/[0.08] text-gray-300">
                 {outgoingRequests.length}
               </span>
             )}
@@ -244,33 +265,33 @@ export default function MyRidesView({
         </div>
 
         {outgoingRequests.length === 0 ? (
-          <div className="p-6 text-center rounded-xl bg-surface/60 border border-border text-muted text-xs">
+          <div className="p-8 text-center rounded-2xl bg-[#121522]/60 border border-white/[0.06] text-gray-400 text-xs">
             You haven't requested to join any rides yet.
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {outgoingRequests.map((req) => {
               const targetRide = rides.find((r) => r.id === req.ride_id);
               return (
-                <div key={req.id} className="card border-border bg-surface p-4">
-                  <div className="flex items-start justify-between gap-2 mb-2.5">
+                <div key={req.id} className="rounded-2xl bg-[#121522]/90 backdrop-blur-xl border border-white/[0.08] p-5 shadow-lg">
+                  <div className="flex items-start justify-between gap-2 mb-3">
                     <div>
-                      <p className="text-sm font-semibold text-text">
+                      <p className="text-sm font-bold text-white">
                         {targetRide ? `${targetRide.origin} ➔ ${targetRide.destination}` : 'Ride Request'}
                       </p>
                       {targetRide && (
-                        <p className="text-xs text-muted">
+                        <p className="text-xs text-gray-400 mt-0.5">
                           {targetRide.departure_time} · {targetRide.departure_date}
                         </p>
                       )}
                     </div>
                     <span
-                      className={`text-[11px] font-semibold px-2 py-0.5 rounded-md ${
+                      className={`text-[11px] font-semibold px-2.5 py-1 rounded-full border ${
                         req.status === 'accepted'
-                          ? 'bg-green/15 text-green border border-green/30'
+                          ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
                           : req.status === 'rejected'
-                          ? 'bg-red/15 text-red border border-red/30'
-                          : 'bg-yellow/15 text-yellow border border-yellow/30'
+                          ? 'bg-rose-500/15 text-rose-400 border-rose-500/30'
+                          : 'bg-amber-500/15 text-amber-400 border-amber-500/30'
                       }`}
                     >
                       {req.status === 'accepted' ? 'Accepted' : req.status === 'rejected' ? 'Declined' : 'Pending'}
@@ -278,9 +299,9 @@ export default function MyRidesView({
                   </div>
 
                   {req.status === 'accepted' && (
-                    <div className="mt-3 p-2.5 rounded-lg bg-green/10 border border-green/20 space-y-2 text-xs">
-                      <div className="text-green font-semibold flex items-center gap-1.5">
-                        <CheckCircle className="w-3.5 h-3.5" />
+                    <div className="mt-3 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/25 space-y-2.5 text-xs">
+                      <div className="text-emerald-400 font-bold flex items-center gap-1.5">
+                        <CheckCircle className="w-4 h-4" />
                         <span>Accepted by host</span>
                       </div>
                       <a
@@ -289,10 +310,10 @@ export default function MyRidesView({
                         )}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full py-1.5 px-3 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-black font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                        className="w-full py-2 px-3 rounded-full bg-[#25D366] hover:bg-[#20ba59] text-black font-bold flex items-center justify-center gap-1.5 transition-all shadow-[0_0_15px_rgba(37,211,102,0.3)]"
                       >
-                        <MessageCircle className="w-3.5 h-3.5" />
-                        Chat with Host
+                        <MessageCircle className="w-4 h-4 fill-black text-transparent" />
+                        Chat with Host on WhatsApp
                       </a>
                     </div>
                   )}
@@ -305,60 +326,60 @@ export default function MyRidesView({
 
       {/* SECTION 3: MY HOSTED RIDES */}
       <section>
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <h2 className="text-base sm:text-lg font-bold text-text">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2.5">
+            <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
               Rides You're Hosting
             </h2>
             {hostedRides.length > 0 && (
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-surface2 border border-border text-muted">
+              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-white/[0.08] text-gray-300">
                 {hostedRides.length}
               </span>
             )}
           </div>
           <button
             onClick={onOpenCreateModal}
-            className="btn-secondary text-xs py-1.5 px-3 gap-1 flex items-center"
+            className="btn-secondary text-xs py-1.5 px-3.5 gap-1.5 flex items-center shadow-md cursor-pointer"
           >
-            <Plus className="w-3 h-3" />
+            <Plus className="w-3.5 h-3.5 text-[#1E88E5]" />
             <span>Post Ride</span>
           </button>
         </div>
 
         {hostedRides.length === 0 ? (
-          <div className="p-6 text-center rounded-xl bg-surface/60 border border-border text-muted text-xs">
+          <div className="p-8 text-center rounded-2xl bg-[#121522]/60 border border-white/[0.06] text-gray-400 text-xs">
             You haven't posted any rides yet.
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {hostedRides.map((ride) => (
-              <div key={ride.id} className="card border-border bg-surface p-4 flex flex-col justify-between">
+              <div key={ride.id} className="rounded-2xl bg-[#121522]/90 backdrop-blur-xl border border-white/[0.08] p-5 shadow-lg flex flex-col justify-between">
                 <div>
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center justify-between mb-3">
                     <TransportBadge mode={ride.transport_mode} vehicleType={ride.vehicle_type} size="sm" />
-                    <span className="text-xs text-muted">
+                    <span className="text-xs font-mono font-medium text-gray-400">
                       {ride.available_seats} of {ride.total_seats} seats left
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm font-semibold text-text mb-1.5">
-                    <span>{ride.origin}</span>
-                    <ArrowRight className="w-3 h-3 text-muted shrink-0" />
-                    <span>{ride.destination}</span>
+                  <div className="flex items-center gap-2 text-sm font-bold text-white mb-2">
+                    <span className="truncate">{ride.origin}</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-gray-500 shrink-0" />
+                    <span className="truncate text-[#c084fc]">{ride.destination}</span>
                   </div>
-                  <div className="text-xs text-muted flex items-center justify-between">
+                  <div className="text-xs text-gray-400 flex items-center justify-between">
                     <span>{ride.departure_time} · {ride.departure_date}</span>
-                    <span className="font-semibold text-text capitalize">{ride.fare_type}</span>
+                    <span className="font-mono text-[11px] text-[#60a5fa] uppercase">{ride.fare_type}</span>
                   </div>
                 </div>
 
                 {onEditRide && (
-                  <div className="mt-3 pt-3 border-t border-border flex justify-end">
+                  <div className="mt-4 pt-3 border-t border-white/[0.08] flex justify-end">
                     <button
                       type="button"
                       onClick={() => onEditRide(ride)}
-                      className="btn-secondary text-xs py-1.5 px-3 flex items-center gap-1.5"
+                      className="btn-secondary text-xs py-1.5 px-3.5 flex items-center gap-1.5 cursor-pointer"
                     >
-                      <Edit3 className="w-3.5 h-3.5" />
+                      <Edit3 className="w-3.5 h-3.5 text-[#1E88E5]" />
                       <span>Edit Ride</span>
                     </button>
                   </div>
