@@ -1,5 +1,5 @@
 import React from 'react';
-import { GraduationCap, Search, Plus, Sparkles } from 'lucide-react';
+import { GraduationCap, Search, Plus } from 'lucide-react';
 import { ExamSession } from '../types';
 
 interface ExamTransitBannerProps {
@@ -33,10 +33,6 @@ export default function ExamTransitBanner({
                 <h1 className="text-base sm:text-lg font-bold text-white tracking-tight">
                   NPTEL & Exam Transit
                 </h1>
-                <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-[#1E88E5]/15 text-[#60a5fa] border border-[#1E88E5]/30">
-                  <Sparkles className="w-2.5 h-2.5" />
-                  SRM Verified
-                </span>
               </div>
               <p className="text-xs text-gray-400 mt-0.5">
                 Pool autos, cabs, and EMU trains to off-campus centers with SRM students

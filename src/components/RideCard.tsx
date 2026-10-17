@@ -6,7 +6,6 @@ import {
   MessageCircle,
   CheckCircle2,
   ArrowRight,
-  ShieldCheck,
   Edit3,
 } from 'lucide-react';
 import { RideListing, UserProfile, RequestStatus, UnlockedContact } from '../types';
@@ -80,7 +79,7 @@ export default function RideCard({
               isFull
                 ? 'bg-rose-500/10 text-rose-400 border-rose-500/30'
                 : ride.available_seats === 1
-                ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                ? 'bg-[#FBC02D]/10 text-[#FBC02D] border-[#FBC02D]/30'
                 : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
             }`}
           >
@@ -89,7 +88,7 @@ export default function RideCard({
                 isFull
                   ? 'bg-rose-400'
                   : ride.available_seats === 1
-                  ? 'bg-amber-400 animate-pulse'
+                  ? 'bg-[#FBC02D] animate-pulse'
                   : 'bg-emerald-400'
               }`}
             />
@@ -99,31 +98,46 @@ export default function RideCard({
           </div>
         </div>
 
-        {/* Route Stream: Waypoints */}
-        <div className="relative pl-7 py-1 mb-4 space-y-3.5">
-          {/* Vertical Route Connector */}
-          <div className="absolute left-2.5 top-2.5 bottom-2.5 w-0.5 bg-gradient-to-b from-[#1E88E5] via-slate-700 to-[#10b981]" />
+        {/* Route Stream: Waypoints with perfectly centered connecting line */}
+        <div className="flex gap-3 py-1 mb-4">
+          {/* Vertical Track Column: Circles & Connecting Line */}
+          <div className="relative flex flex-col items-center justify-between shrink-0 w-3 pt-1 pb-1">
+            {/* Connecting Line running through center axis of both circles */}
+            <div className="absolute top-2.5 bottom-2.5 left-1/2 -translate-x-1/2 w-0.5 bg-gradient-to-b from-[#1E88E5] via-slate-600 to-[#10b981] z-0" />
 
-          {/* Origin / Pickup */}
-          <div className="relative">
-            <div className="absolute -left-7 top-1 w-3 h-3 rounded-full bg-[#1E88E5] border-2 border-[#16181d] shadow-[0_0_8px_rgba(30,136,229,0.8)]" />
-            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">
-              Pickup Point
-            </span>
-            <p className="text-sm font-semibold text-white leading-snug line-clamp-1">
-              {ride.origin}
-            </p>
+            {/* Top Dot (Pickup) with animated subtle pulse */}
+            <div className="relative flex items-center justify-center z-10">
+              <span className="absolute w-3.5 h-3.5 rounded-full bg-[#1E88E5]/40 animate-ping" />
+              <div className="w-3 h-3 rounded-full bg-[#1E88E5] border-2 border-[#16181d] shadow-[0_0_8px_rgba(30,136,229,0.9)] relative" />
+            </div>
+
+            {/* Bottom Dot (Destination) */}
+            <div className="relative flex items-center justify-center z-10">
+              <div className="w-3 h-3 rounded-full bg-[#10b981] border-2 border-[#16181d] shadow-[0_0_8px_rgba(16,185,129,0.9)] relative" />
+            </div>
           </div>
 
-          {/* Destination */}
-          <div className="relative">
-            <div className="absolute -left-7 top-1 w-3 h-3 rounded-full bg-[#10b981] border-2 border-[#16181d] shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
-            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">
-              Destination / Center
-            </span>
-            <p className="text-sm font-bold text-white leading-snug line-clamp-1">
-              {ride.destination}
-            </p>
+          {/* Details Column */}
+          <div className="flex-1 min-w-0 space-y-3">
+            {/* Origin / Pickup */}
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">
+                Pickup Point
+              </span>
+              <p className="text-sm font-semibold text-white leading-snug line-clamp-1">
+                {ride.origin}
+              </p>
+            </div>
+
+            {/* Destination */}
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">
+                Destination / Center
+              </span>
+              <p className="text-sm font-bold text-white leading-snug line-clamp-1">
+                {ride.destination}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -143,8 +157,8 @@ export default function RideCard({
                 key={i}
                 className={`w-2 h-2 rounded-full transition-all ${
                   i < filledSeats
-                    ? 'bg-[#1E88E5] shadow-[0_0_5px_rgba(30,136,229,0.5)]'
-                    : 'bg-white/10 border border-white/15'
+                    ? 'bg-[#1E88E5] shadow-[0_0_6px_rgba(30,136,229,0.7)]'
+                    : 'bg-white/[0.1] border border-white/[0.15]'
                 }`}
               />
             ))}
@@ -169,7 +183,6 @@ export default function RideCard({
               {ride.host_gender === 'female' ? 'F' : 'M'}
             </div>
             <div className="flex items-center gap-1 truncate">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
               <span className="truncate text-gray-300 font-medium">
                 {ride.host_gender ? (ride.host_gender === 'female' ? 'Female Host' : 'Male Host') : 'Host'}
                 {ride.host_department ? ` · ${ride.host_department}` : ''}
@@ -234,8 +247,8 @@ export default function RideCard({
             <span>Seat Confirmed</span>
           </div>
         ) : isPending ? (
-          <div className="w-full py-2.5 px-3 rounded-full bg-amber-500/15 border border-amber-500/30 text-center text-xs font-semibold text-amber-400 flex items-center justify-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+          <div className="w-full py-2.5 px-3 rounded-full bg-[#FBC02D]/15 border border-[#FBC02D]/30 text-center text-xs font-semibold text-[#FBC02D] flex items-center justify-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-[#FBC02D] animate-pulse" />
             <span>Request Pending Host Approval</span>
           </div>
         ) : isFull ? (

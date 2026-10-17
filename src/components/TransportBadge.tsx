@@ -32,7 +32,7 @@ export default function TransportBadge({
       case 'cab':
         return {
           label: 'Cab / Auto',
-          color: 'text-amber-400 border-amber-500/25 bg-amber-500/10',
+          color: 'text-[#FBC02D] border-[#FBC02D]/30 bg-[#FBC02D]/10',
           icon: <CarTaxiFront className={size === 'sm' ? 'w-3 h-3' : 'w-3.5 h-3.5'} />,
         };
       case 'private_vehicle':

@@ -314,11 +314,11 @@ export default function CreateRideModal({
                 onClick={() => setTransportMode('cab')}
                 className={`flex flex-col items-center justify-center p-3 rounded-2xl border text-xs gap-1.5 transition-all cursor-pointer ${
                   transportMode === 'cab'
-                    ? 'border-amber-500/50 bg-amber-500/20 text-amber-300 font-bold shadow-sm'
+                    ? 'border-[#FBC02D]/50 bg-[#FBC02D]/20 text-[#FBC02D] font-bold shadow-sm'
                     : 'border-white/[0.08] bg-[#101216] text-gray-400 hover:text-white hover:border-white/20'
                 }`}
               >
-                <CarTaxiFront className="w-4 h-4 text-amber-400" />
+                <CarTaxiFront className="w-4 h-4 text-[#FBC02D]" />
                 <span className="text-[11px]">Cab / Auto</span>
               </button>
 

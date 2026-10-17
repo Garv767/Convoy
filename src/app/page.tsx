@@ -367,7 +367,7 @@ export default function Home() {
 
       {/* Supabase Connection Notice if anon key not added */}
       {!isSupabaseConfigured && (
-        <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 py-2 text-xs text-amber-300">
+        <div className="bg-[#FBC02D]/10 border-b border-[#FBC02D]/20 px-4 py-2 text-xs text-[#FBC02D]">
           <div className="flex items-center gap-2 max-w-7xl mx-auto w-full">
             <KeyRound className="w-4 h-4 shrink-0" />
             <span>
@@ -439,11 +439,11 @@ export default function Home() {
                   onClick={() => setSelectedMode('cab')}
                   className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 shrink-0 cursor-pointer ${
                     selectedMode === 'cab'
-                      ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50 shadow-sm'
+                      ? 'bg-[#FBC02D]/20 text-[#FBC02D] border border-[#FBC02D]/50 shadow-sm'
                       : 'bg-[#16181d] text-gray-400 hover:text-white border border-white/[0.08] hover:border-white/20 hover:bg-[#20232a]'
                   }`}
                 >
-                  <CarTaxiFront className="w-3.5 h-3.5 text-amber-400" />
+                  <CarTaxiFront className="w-3.5 h-3.5 text-[#FBC02D]" />
                   <span>Auto / Cab</span>
                 </button>
                 <button
