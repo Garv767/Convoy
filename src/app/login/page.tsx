@@ -81,14 +81,9 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-background relative overflow-hidden">
-      {/* Dynamic Background Elements (Unfugly aesthetic) */}
+      {/* Subtle Ambient Lighting */}
       <div
-        className="absolute top-[-10%] left-[-10%] w-[45vw] h-[45vw] bg-[#1E88E5]/15 blur-[140px] rounded-full pointer-events-none animate-pulse"
-        style={{ animationDuration: '8s' }}
-      />
-      <div
-        className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-[#8b5cf6]/12 blur-[150px] rounded-full pointer-events-none animate-pulse"
-        style={{ animationDuration: '10s', animationDelay: '2s' }}
+        className="absolute top-[-10%] left-[-10%] w-[45vw] h-[45vw] bg-[#1E88E5]/5 blur-[140px] rounded-full pointer-events-none"
       />
 
       {/* Return to Home link */}
@@ -102,13 +97,13 @@ export default function LoginPage() {
         </Link>
       </div>
 
-      <div className="w-full max-w-sm bg-[#121522]/90 backdrop-blur-2xl border border-white/[0.1] rounded-3xl p-7 shadow-2xl relative z-10 overflow-hidden">
-        {/* Top subtle gradient highlight line */}
-        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-[#1E88E5] via-[#8b5cf6] to-[#10b981]" />
+      <div className="w-full max-w-sm bg-[#16181d] border border-white/[0.1] rounded-3xl p-7 shadow-2xl relative z-10 overflow-hidden">
+        {/* Top Unfugly blue highlight line */}
+        <div className="absolute top-0 inset-x-0 h-[2px] bg-[#1E88E5]" />
 
         {/* Header with App Logo */}
         <div className="text-center mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#1E88E5] via-[#6c8ef7] to-[#8b5cf6] p-0.5 mx-auto flex items-center justify-center shadow-[0_0_24px_rgba(30,136,229,0.35)] mb-3">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#1E88E5] to-[#1565C0] p-0.5 mx-auto flex items-center justify-center shadow-[0_0_15px_rgba(30,136,229,0.3)] mb-3">
             <svg viewBox="0 0 64 64" fill="none" className="w-8 h-8">
               <path
                 d="M48 20.5C45.5 15.5 40 12 33 12C21.4 12 12 21.4 12 33C12 44.6 21.4 54 33 54C42 54 49 48 51.5 40"
@@ -159,7 +154,7 @@ export default function LoginPage() {
                   placeholder="ab1234 or ab1234@srmist.edu.in"
                   required
                   disabled={loading}
-                  className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
+                  className="w-full bg-[#101216] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
                 />
               </div>
               <p className="text-[11px] text-gray-400 mt-1.5">
@@ -170,7 +165,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full text-xs py-3 flex items-center justify-center gap-2 shadow-lg"
+              className="btn-primary w-full text-xs py-3 flex items-center justify-center gap-2 shadow-md"
             >
               {loading ? (
                 <span>Sending code...</span>
@@ -201,7 +196,7 @@ export default function LoginPage() {
                   required
                   disabled={loading}
                   autoFocus
-                  className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl pl-10 pr-3.5 py-2.5 text-center font-mono tracking-widest text-base font-bold text-white outline-none transition-all"
+                  className="w-full bg-[#101216] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl pl-10 pr-3.5 py-2.5 text-center font-mono tracking-widest text-base font-bold text-white outline-none transition-all"
                 />
               </div>
             </div>
@@ -209,7 +204,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full text-xs py-3 flex items-center justify-center gap-2 shadow-lg"
+              className="btn-primary w-full text-xs py-3 flex items-center justify-center gap-2 shadow-md"
             >
               {loading ? 'Verifying...' : 'Continue'}
             </button>

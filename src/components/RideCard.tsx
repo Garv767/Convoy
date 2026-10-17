@@ -4,13 +4,10 @@ import {
   Users,
   GraduationCap,
   MessageCircle,
-  Phone,
   CheckCircle2,
   ArrowRight,
   ShieldCheck,
   Edit3,
-  MapPin,
-  ChevronDown,
 } from 'lucide-react';
 import { RideListing, UserProfile, RequestStatus, UnlockedContact } from '../types';
 import TransportBadge from './TransportBadge';
@@ -60,9 +57,9 @@ export default function RideCard({
   const filledSeats = Math.max(1, ride.total_seats - ride.available_seats);
 
   return (
-    <div className="group relative flex flex-col justify-between rounded-2xl bg-[#121522]/90 backdrop-blur-xl border border-white/[0.08] hover:border-[#1E88E5]/45 hover:shadow-[0_16px_40px_-8px_rgba(0,0,0,0.7),0_0_24px_rgba(30,136,229,0.15)] hover:-translate-y-1 transition-all duration-300 p-5 overflow-hidden">
-      {/* Top subtle hover accent gradient highlight */}
-      <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#1E88E5] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+    <div className="group relative flex flex-col justify-between rounded-2xl bg-[#16181d] border border-white/[0.08] hover:border-[#1E88E5]/45 hover:shadow-[0_16px_36px_-8px_rgba(0,0,0,0.8),0_0_20px_rgba(30,136,229,0.12)] hover:-translate-y-1 transition-all duration-200 p-5 overflow-hidden">
+      {/* Top subtle hover accent line */}
+      <div className="absolute top-0 inset-x-0 h-[2px] bg-[#1E88E5] opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
 
       <div>
         {/* Top Header Row: Mode Badge + Shift + Live Seat Pill */}
@@ -70,8 +67,8 @@ export default function RideCard({
           <div className="flex items-center gap-1.5 flex-wrap">
             <TransportBadge mode={ride.transport_mode} vehicleType={ride.vehicle_type} size="sm" />
             {ride.exam_session && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#8b5cf6]/15 text-[#c084fc] border border-[#8b5cf6]/30">
-                <GraduationCap className="w-3 h-3" />
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#22252c] text-gray-300 border border-[#323642]">
+                <GraduationCap className="w-3 h-3 text-[#1E88E5]" />
                 {ride.exam_session === 'FN' ? 'FN Shift' : 'AN Shift'}
               </span>
             )}
@@ -105,12 +102,12 @@ export default function RideCard({
         {/* Route Stream: Waypoints */}
         <div className="relative pl-7 py-1 mb-4 space-y-3.5">
           {/* Vertical Route Connector */}
-          <div className="absolute left-2.5 top-2.5 bottom-2.5 w-0.5 bg-gradient-to-b from-[#1E88E5] via-[#8b5cf6]/50 to-[#10b981]" />
+          <div className="absolute left-2.5 top-2.5 bottom-2.5 w-0.5 bg-gradient-to-b from-[#1E88E5] via-slate-700 to-[#10b981]" />
 
           {/* Origin / Pickup */}
           <div className="relative">
-            <div className="absolute -left-7 top-1 w-3 h-3 rounded-full bg-[#1E88E5] border-2 border-[#121522] shadow-[0_0_10px_rgba(30,136,229,0.8)]" />
-            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block">
+            <div className="absolute -left-7 top-1 w-3 h-3 rounded-full bg-[#1E88E5] border-2 border-[#16181d] shadow-[0_0_8px_rgba(30,136,229,0.8)]" />
+            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">
               Pickup Point
             </span>
             <p className="text-sm font-semibold text-white leading-snug line-clamp-1">
@@ -120,9 +117,9 @@ export default function RideCard({
 
           {/* Destination */}
           <div className="relative">
-            <div className="absolute -left-7 top-1 w-3 h-3 rounded-full bg-[#10b981] border-2 border-[#121522] shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#a78bfa] block">
-              Exam Center / Destination
+            <div className="absolute -left-7 top-1 w-3 h-3 rounded-full bg-[#10b981] border-2 border-[#16181d] shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">
+              Destination / Center
             </span>
             <p className="text-sm font-bold text-white leading-snug line-clamp-1">
               {ride.destination}
@@ -131,7 +128,7 @@ export default function RideCard({
         </div>
 
         {/* Departure Timing & Visual Seat Dots Strip */}
-        <div className="flex items-center justify-between py-2 px-3 rounded-xl bg-[#0c0e17]/80 border border-white/[0.06] text-xs mb-3.5">
+        <div className="flex items-center justify-between py-2 px-3 rounded-xl bg-[#101216] border border-white/[0.06] text-xs mb-3.5">
           <div className="flex items-center gap-1.5 text-gray-200 font-medium">
             <Clock className="w-3.5 h-3.5 text-[#1E88E5]" />
             <span className="font-semibold text-white">{ride.departure_time}</span>
@@ -146,8 +143,8 @@ export default function RideCard({
                 key={i}
                 className={`w-2 h-2 rounded-full transition-all ${
                   i < filledSeats
-                    ? 'bg-[#1E88E5] shadow-[0_0_6px_rgba(30,136,229,0.6)]'
-                    : 'bg-white/15 border border-white/20'
+                    ? 'bg-[#1E88E5] shadow-[0_0_5px_rgba(30,136,229,0.5)]'
+                    : 'bg-white/10 border border-white/15'
                 }`}
               />
             ))}
@@ -167,8 +164,8 @@ export default function RideCard({
         {/* Host Meta Row */}
         <div className="flex items-center justify-between text-xs text-gray-400 mb-4 pt-3 border-t border-white/[0.06]">
           <div className="flex items-center gap-2 truncate">
-            {/* Host Avatar Ring */}
-            <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-[#1E88E5]/30 to-[#8b5cf6]/30 border border-[#1E88E5]/50 flex items-center justify-center text-[10px] font-bold text-white shrink-0">
+            {/* Host Avatar Ring (Unfugly Blue) */}
+            <div className="w-6 h-6 rounded-full bg-[#1E88E5]/20 border border-[#1E88E5]/50 flex items-center justify-center text-[10px] font-bold text-white shrink-0">
               {ride.host_gender === 'female' ? 'F' : 'M'}
             </div>
             <div className="flex items-center gap-1 truncate">
@@ -203,7 +200,7 @@ export default function RideCard({
               )}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full py-2 px-3 rounded-full bg-[#25D366] hover:bg-[#20ba59] text-black font-bold flex items-center justify-center gap-1.5 transition-all shadow-[0_0_20px_rgba(37,211,102,0.3)] hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full py-2 px-3 rounded-full bg-[#25D366] hover:bg-[#20ba59] text-black font-bold flex items-center justify-center gap-1.5 transition-all shadow-[0_0_15px_rgba(37,211,102,0.3)] hover:scale-[1.02] active:scale-[0.98]"
             >
               <MessageCircle className="w-4 h-4 fill-black text-transparent" />
               <span>Chat on WhatsApp</span>
@@ -248,7 +245,7 @@ export default function RideCard({
         ) : (
           <button
             onClick={() => onRequestJoin(ride)}
-            className="btn-primary w-full text-xs py-2.5 gap-2 shadow-lg"
+            className="btn-primary w-full text-xs py-2.5 gap-2 shadow-md"
           >
             <span>Request Seat</span>
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />

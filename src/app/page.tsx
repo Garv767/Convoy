@@ -319,17 +319,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col relative overflow-x-hidden">
-      {/* Dynamic Ambient Background Glows */}
+      {/* Subtle Background Lighting */}
       <div
-        className="fixed top-[-10%] left-[-10%] w-[45vw] h-[45vw] bg-[#1E88E5]/10 blur-[140px] rounded-full pointer-events-none animate-pulse"
-        style={{ animationDuration: '9s' }}
-      />
-      <div
-        className="fixed top-[30%] right-[-10%] w-[40vw] h-[40vw] bg-[#8b5cf6]/10 blur-[150px] rounded-full pointer-events-none animate-pulse"
-        style={{ animationDuration: '11s', animationDelay: '2s' }}
-      />
-      <div
-        className="fixed bottom-[-10%] left-[20%] w-[40vw] h-[30vw] bg-[#10b981]/5 blur-[160px] rounded-full pointer-events-none"
+        className="fixed top-[-10%] left-[-10%] w-[45vw] h-[45vw] bg-[#1E88E5]/5 blur-[140px] rounded-full pointer-events-none"
       />
 
       {/* Top Navigation */}
@@ -376,15 +368,15 @@ export default function Home() {
               }}
             />
           ) : (
-            <div className="rounded-3xl bg-[#121522]/90 backdrop-blur-xl border border-white/[0.08] text-center py-14 px-6 max-w-md mx-auto my-10 shadow-2xl">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1E88E5]/20 to-[#8b5cf6]/20 border border-[#1E88E5]/30 text-[#1E88E5] flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(30,136,229,0.2)]">
+            <div className="rounded-3xl bg-[#16181d] border border-white/[0.08] text-center py-14 px-6 max-w-md mx-auto my-10 shadow-2xl">
+              <div className="w-12 h-12 rounded-2xl bg-[#1E88E5]/10 border border-[#1E88E5]/25 text-[#1E88E5] flex items-center justify-center mx-auto mb-4">
                 <ShieldCheck className="w-6 h-6 text-emerald-400" />
               </div>
               <h2 className="text-lg font-bold text-white mb-2">Student Activity Hub</h2>
               <p className="text-xs text-gray-400 leading-relaxed mb-6 max-w-xs mx-auto">
                 Sign in with your verified <span className="text-[#60a5fa] font-mono">@srmist.edu.in</span> account to manage incoming passenger requests and coordinate rides.
               </p>
-              <Link href="/login" className="btn-primary text-xs py-2.5 px-6 mx-auto inline-flex shadow-lg">
+              <Link href="/login" className="btn-primary text-xs py-2.5 px-6 mx-auto inline-flex shadow-md">
                 Sign In with SRM Mail
               </Link>
             </div>
@@ -407,8 +399,8 @@ export default function Home() {
                   onClick={() => setSelectedMode('all')}
                   className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 shrink-0 cursor-pointer ${
                     selectedMode === 'all'
-                      ? 'bg-gradient-to-r from-[#1E88E5] to-[#3b82f6] text-white shadow-[0_0_20px_rgba(30,136,229,0.35)]'
-                      : 'bg-[#121522]/90 backdrop-blur-md text-gray-400 hover:text-white border border-white/[0.08] hover:border-white/20 hover:bg-[#1a1e2d]'
+                      ? 'bg-[#1E88E5] text-white shadow-sm'
+                      : 'bg-[#16181d] text-gray-400 hover:text-white border border-white/[0.08] hover:border-white/20 hover:bg-[#20232a]'
                   }`}
                 >
                   All Modes
@@ -417,8 +409,8 @@ export default function Home() {
                   onClick={() => setSelectedMode('cab')}
                   className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 shrink-0 cursor-pointer ${
                     selectedMode === 'cab'
-                      ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.25)]'
-                      : 'bg-[#121522]/90 backdrop-blur-md text-gray-400 hover:text-white border border-white/[0.08] hover:border-white/20 hover:bg-[#1a1e2d]'
+                      ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50 shadow-sm'
+                      : 'bg-[#16181d] text-gray-400 hover:text-white border border-white/[0.08] hover:border-white/20 hover:bg-[#20232a]'
                   }`}
                 >
                   <CarTaxiFront className="w-3.5 h-3.5 text-amber-400" />
@@ -428,8 +420,8 @@ export default function Home() {
                   onClick={() => setSelectedMode('bus')}
                   className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 shrink-0 cursor-pointer ${
                     selectedMode === 'bus'
-                      ? 'bg-blue-500/20 text-blue-300 border border-blue-500/50 shadow-[0_0_20px_rgba(59,130,246,0.25)]'
-                      : 'bg-[#121522]/90 backdrop-blur-md text-gray-400 hover:text-white border border-white/[0.08] hover:border-white/20 hover:bg-[#1a1e2d]'
+                      ? 'bg-blue-500/20 text-blue-300 border border-blue-500/50 shadow-sm'
+                      : 'bg-[#16181d] text-gray-400 hover:text-white border border-white/[0.08] hover:border-white/20 hover:bg-[#20232a]'
                   }`}
                 >
                   <Bus className="w-3.5 h-3.5 text-blue-400" />
@@ -439,19 +431,19 @@ export default function Home() {
                   onClick={() => setSelectedMode('train')}
                   className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 shrink-0 cursor-pointer ${
                     selectedMode === 'train'
-                      ? 'bg-purple-500/20 text-purple-300 border border-purple-500/50 shadow-[0_0_20px_rgba(168,85,247,0.25)]'
-                      : 'bg-[#121522]/90 backdrop-blur-md text-gray-400 hover:text-white border border-white/[0.08] hover:border-white/20 hover:bg-[#1a1e2d]'
+                      ? 'bg-sky-500/20 text-sky-300 border border-sky-500/50 shadow-sm'
+                      : 'bg-[#16181d] text-gray-400 hover:text-white border border-white/[0.08] hover:border-white/20 hover:bg-[#20232a]'
                   }`}
                 >
-                  <TrainFront className="w-3.5 h-3.5 text-purple-400" />
+                  <TrainFront className="w-3.5 h-3.5 text-sky-400" />
                   <span>Train</span>
                 </button>
                 <button
                   onClick={() => setSelectedMode('private_vehicle')}
                   className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 shrink-0 cursor-pointer ${
                     selectedMode === 'private_vehicle'
-                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.25)]'
-                      : 'bg-[#121522]/90 backdrop-blur-md text-gray-400 hover:text-white border border-white/[0.08] hover:border-white/20 hover:bg-[#1a1e2d]'
+                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 shadow-sm'
+                      : 'bg-[#16181d] text-gray-400 hover:text-white border border-white/[0.08] hover:border-white/20 hover:bg-[#20232a]'
                   }`}
                 >
                   <Bike className="w-3.5 h-3.5 text-emerald-400" />
@@ -462,12 +454,12 @@ export default function Home() {
               <div className="flex items-center gap-2.5 shrink-0">
                 <button
                   onClick={loadRides}
-                  className="p-2 rounded-full bg-[#121522]/90 border border-white/[0.08] text-gray-400 hover:text-white hover:border-white/25 text-xs flex items-center justify-center transition-all cursor-pointer"
+                  className="p-2 rounded-full bg-[#16181d] border border-white/[0.08] text-gray-400 hover:text-white hover:border-white/25 text-xs flex items-center justify-center transition-all cursor-pointer"
                   title="Refresh rides"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${loadingRides ? 'animate-spin text-[#1E88E5]' : ''}`} />
                 </button>
-                <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#121522]/90 border border-white/[0.08] text-xs font-medium text-gray-300">
+                <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#16181d] border border-white/[0.08] text-xs font-medium text-gray-300">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                   <span>{filteredRides.length} {filteredRides.length === 1 ? 'ride' : 'rides'}</span>
                 </div>
@@ -488,7 +480,7 @@ export default function Home() {
                 {[1, 2, 3].map((n) => (
                   <div
                     key={n}
-                    className="rounded-2xl bg-[#121522]/80 border border-white/[0.06] p-5 h-64 animate-pulse flex flex-col justify-between"
+                    className="rounded-2xl bg-[#16181d] border border-white/[0.06] p-5 h-64 animate-pulse flex flex-col justify-between"
                   >
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
@@ -508,7 +500,7 @@ export default function Home() {
                 ))}
               </div>
             ) : filteredRides.length === 0 ? (
-              <div className="rounded-3xl bg-[#121522]/70 backdrop-blur-xl border border-dashed border-white/[0.12] text-center py-16 px-6 my-6 shadow-xl">
+              <div className="rounded-3xl bg-[#16181d] border border-dashed border-white/[0.12] text-center py-16 px-6 my-6 shadow-xl">
                 <div className="w-14 h-14 rounded-2xl bg-[#1E88E5]/10 border border-[#1E88E5]/20 text-[#60a5fa] flex items-center justify-center mx-auto mb-4">
                   <Compass className="w-7 h-7" />
                 </div>
@@ -526,7 +518,7 @@ export default function Home() {
                       setIsCreateModalOpen(true);
                     }
                   }}
-                  className="btn-primary text-xs py-2.5 px-6 gap-2 shadow-lg"
+                  className="btn-primary text-xs py-2.5 px-6 gap-2 shadow-md"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Post the First Ride</span>
@@ -564,7 +556,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="hidden md:block mt-auto border-t border-white/[0.06] py-5 text-xs text-gray-500 relative z-10 bg-[#090b11]/80 backdrop-blur-md">
+      <footer className="hidden md:block mt-auto border-t border-white/[0.06] py-5 text-xs text-gray-500 relative z-10 bg-[#0d0f12]">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="font-bold text-gray-300">Convoy</span>

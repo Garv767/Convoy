@@ -207,6 +207,14 @@ export async function submitLiveRequest(input: {
     });
 
     if (error) return { success: false, error: error.message };
+
+    // Fire-and-forget host email notification
+    fetch('/api/notify-host', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input),
+    }).catch((err) => console.warn('Host email notification trigger error:', err));
+
     return { success: true, error: null };
   } catch (err: any) {
     return { success: false, error: err.message };

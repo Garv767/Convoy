@@ -7,10 +7,6 @@ import {
   Bike,
   GraduationCap,
   Users,
-  MapPin,
-  Clock,
-  Calendar,
-  Check,
 } from 'lucide-react';
 import { TransportMode, ExamSession, RideListing, UserProfile } from '../types';
 
@@ -162,15 +158,15 @@ export default function CreateRideModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/80 backdrop-blur-md">
-      <div className="w-full sm:max-w-lg bg-[#121522] border-t sm:border border-white/[0.12] rounded-t-3xl sm:rounded-3xl max-h-[92vh] sm:max-h-[88vh] flex flex-col shadow-[0_25px_60px_-15px_rgba(0,0,0,0.85)] overflow-hidden relative">
-        {/* Top subtle gradient highlight line */}
-        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-[#1E88E5] via-[#8b5cf6] to-[#10b981]" />
+      <div className="w-full sm:max-w-lg bg-[#16181d] border-t sm:border border-white/[0.12] rounded-t-3xl sm:rounded-3xl max-h-[92vh] sm:max-h-[88vh] flex flex-col shadow-[0_25px_60px_-15px_rgba(0,0,0,0.85)] overflow-hidden relative">
+        {/* Top blue highlight line */}
+        <div className="absolute top-0 inset-x-0 h-[2px] bg-[#1E88E5]" />
 
         {/* Sticky Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.08] shrink-0 bg-[#121522]/95 backdrop-blur-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.08] shrink-0 bg-[#16181d]">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#1E88E5]/20 to-[#8b5cf6]/20 border border-[#1E88E5]/30 text-[#1E88E5] flex items-center justify-center">
-              <GraduationCap className="w-4 h-4 text-[#60a5fa]" />
+            <div className="w-8 h-8 rounded-xl bg-[#1E88E5]/10 border border-[#1E88E5]/25 text-[#1E88E5] flex items-center justify-center">
+              <GraduationCap className="w-4 h-4 text-[#1E88E5]" />
             </div>
             <div>
               <h2 className="text-base font-bold text-white tracking-tight">
@@ -199,13 +195,13 @@ export default function CreateRideModal({
                 onClick={() => handleShiftChange('FN')}
                 className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
                   examShift === 'FN'
-                    ? 'border-[#8b5cf6] bg-[#8b5cf6]/15 text-white shadow-[0_0_15px_rgba(139,92,246,0.25)]'
-                    : 'border-white/[0.08] bg-[#0c0e17] text-gray-400 hover:text-white hover:border-white/20'
+                    ? 'border-[#1E88E5] bg-[#1E88E5]/15 text-white shadow-sm'
+                    : 'border-white/[0.08] bg-[#101216] text-gray-400 hover:text-white hover:border-white/20'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">
                   <span className="font-bold text-xs text-white">Forenoon (FN)</span>
-                  <span className="text-[10px] text-[#c084fc] font-mono font-semibold">9 AM – 12 PM</span>
+                  <span className="text-[10px] text-blue-300 font-mono font-semibold">9 AM – 12 PM</span>
                 </div>
                 <span className="text-[11px] text-gray-400 block">Departs early morning (~7:15 AM)</span>
               </button>
@@ -215,13 +211,13 @@ export default function CreateRideModal({
                 onClick={() => handleShiftChange('AN')}
                 className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
                   examShift === 'AN'
-                    ? 'border-[#8b5cf6] bg-[#8b5cf6]/15 text-white shadow-[0_0_15px_rgba(139,92,246,0.25)]'
-                    : 'border-white/[0.08] bg-[#0c0e17] text-gray-400 hover:text-white hover:border-white/20'
+                    ? 'border-[#1E88E5] bg-[#1E88E5]/15 text-white shadow-sm'
+                    : 'border-white/[0.08] bg-[#101216] text-gray-400 hover:text-white hover:border-white/20'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">
                   <span className="font-bold text-xs text-white">Afternoon (AN)</span>
-                  <span className="text-[10px] text-[#c084fc] font-mono font-semibold">2 PM – 5 PM</span>
+                  <span className="text-[10px] text-blue-300 font-mono font-semibold">2 PM – 5 PM</span>
                 </div>
                 <span className="text-[11px] text-gray-400 block">Departs midday (~12:15 PM)</span>
               </button>
@@ -239,7 +235,7 @@ export default function CreateRideModal({
                 value={departureDate}
                 onChange={(e) => setDepartureDate(e.target.value)}
                 required
-                className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none transition-all"
+                className="w-full bg-[#101216] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none transition-all"
               />
             </div>
 
@@ -252,7 +248,7 @@ export default function CreateRideModal({
                 value={departureTime}
                 onChange={(e) => setDepartureTime(e.target.value)}
                 required
-                className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none transition-all"
+                className="w-full bg-[#101216] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none transition-all"
               />
             </div>
           </div>
@@ -269,7 +265,7 @@ export default function CreateRideModal({
                 onChange={(e) => setPickup(e.target.value)}
                 placeholder="e.g. Estancia Gate, SRM Arch Gate, Potheri Stn"
                 required
-                className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
+                className="w-full bg-[#101216] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
               />
 
               {/* Quick Pickups */}
@@ -283,7 +279,7 @@ export default function CreateRideModal({
                     className={`px-2.5 py-1 rounded-full text-[11px] border transition-all shrink-0 cursor-pointer ${
                       pickup === spot
                         ? 'bg-[#1E88E5]/20 border-[#1E88E5]/50 text-[#60a5fa] font-bold'
-                        : 'bg-[#0c0e17] text-gray-400 hover:text-white border-white/[0.06] hover:border-white/20'
+                        : 'bg-[#101216] text-gray-400 hover:text-white border-white/[0.06] hover:border-white/20'
                     }`}
                   >
                     {spot}
@@ -302,7 +298,7 @@ export default function CreateRideModal({
                 onChange={(e) => setDestination(e.target.value)}
                 placeholder="e.g. Chengalpattu, Ambattur, Sholinganallur..."
                 required
-                className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
+                className="w-full bg-[#101216] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
               />
             </div>
           </div>
@@ -318,8 +314,8 @@ export default function CreateRideModal({
                 onClick={() => setTransportMode('cab')}
                 className={`flex flex-col items-center justify-center p-3 rounded-2xl border text-xs gap-1.5 transition-all cursor-pointer ${
                   transportMode === 'cab'
-                    ? 'border-amber-500/50 bg-amber-500/20 text-amber-300 font-bold shadow-[0_0_15px_rgba(245,158,11,0.2)]'
-                    : 'border-white/[0.08] bg-[#0c0e17] text-gray-400 hover:text-white hover:border-white/20'
+                    ? 'border-amber-500/50 bg-amber-500/20 text-amber-300 font-bold shadow-sm'
+                    : 'border-white/[0.08] bg-[#101216] text-gray-400 hover:text-white hover:border-white/20'
                 }`}
               >
                 <CarTaxiFront className="w-4 h-4 text-amber-400" />
@@ -331,8 +327,8 @@ export default function CreateRideModal({
                 onClick={() => setTransportMode('bus')}
                 className={`flex flex-col items-center justify-center p-3 rounded-2xl border text-xs gap-1.5 transition-all cursor-pointer ${
                   transportMode === 'bus'
-                    ? 'border-blue-500/50 bg-blue-500/20 text-blue-300 font-bold shadow-[0_0_15px_rgba(59,130,246,0.2)]'
-                    : 'border-white/[0.08] bg-[#0c0e17] text-gray-400 hover:text-white hover:border-white/20'
+                    ? 'border-blue-500/50 bg-blue-500/20 text-blue-300 font-bold shadow-sm'
+                    : 'border-white/[0.08] bg-[#101216] text-gray-400 hover:text-white hover:border-white/20'
                 }`}
               >
                 <Bus className="w-4 h-4 text-blue-400" />
@@ -344,11 +340,11 @@ export default function CreateRideModal({
                 onClick={() => setTransportMode('train')}
                 className={`flex flex-col items-center justify-center p-3 rounded-2xl border text-xs gap-1.5 transition-all cursor-pointer ${
                   transportMode === 'train'
-                    ? 'border-purple-500/50 bg-purple-500/20 text-purple-300 font-bold shadow-[0_0_15px_rgba(168,85,247,0.2)]'
-                    : 'border-white/[0.08] bg-[#0c0e17] text-gray-400 hover:text-white hover:border-white/20'
+                    ? 'border-sky-500/50 bg-sky-500/20 text-sky-300 font-bold shadow-sm'
+                    : 'border-white/[0.08] bg-[#101216] text-gray-400 hover:text-white hover:border-white/20'
                 }`}
               >
-                <TrainFront className="w-4 h-4 text-purple-400" />
+                <TrainFront className="w-4 h-4 text-sky-400" />
                 <span className="text-[11px]">Train</span>
               </button>
 
@@ -360,8 +356,8 @@ export default function CreateRideModal({
                 }}
                 className={`flex flex-col items-center justify-center p-3 rounded-2xl border text-xs gap-1.5 transition-all cursor-pointer ${
                   transportMode === 'private_vehicle'
-                    ? 'border-emerald-500/50 bg-emerald-500/20 text-emerald-300 font-bold shadow-[0_0_15px_rgba(16,185,129,0.2)]'
-                    : 'border-white/[0.08] bg-[#0c0e17] text-gray-400 hover:text-white hover:border-white/20'
+                    ? 'border-emerald-500/50 bg-emerald-500/20 text-emerald-300 font-bold shadow-sm'
+                    : 'border-white/[0.08] bg-[#101216] text-gray-400 hover:text-white hover:border-white/20'
                 }`}
               >
                 <Bike className="w-4 h-4 text-emerald-400" />
@@ -371,7 +367,7 @@ export default function CreateRideModal({
           </div>
 
           {/* 5. Seats Breakdown Steppers */}
-          <div className="p-4 rounded-2xl bg-[#0c0e17] border border-white/[0.08] space-y-3">
+          <div className="p-4 rounded-2xl bg-[#101216] border border-white/[0.08] space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-white flex items-center gap-1.5">
                 <Users className="w-4 h-4 text-[#1E88E5]" />
@@ -393,7 +389,7 @@ export default function CreateRideModal({
                   <button
                     type="button"
                     onClick={() => setAvailableSeats(Math.max(1, availableSeats - 1))}
-                    className="w-9 h-9 rounded-xl bg-[#191e2e] border border-white/[0.08] hover:border-white/20 text-white font-bold text-base flex items-center justify-center hover:bg-white/[0.08] transition-all cursor-pointer"
+                    className="w-9 h-9 rounded-xl bg-[#1e2127] border border-white/[0.08] hover:border-white/20 text-white font-bold text-base flex items-center justify-center hover:bg-white/[0.08] transition-all cursor-pointer"
                   >
                     -
                   </button>
@@ -403,7 +399,7 @@ export default function CreateRideModal({
                   <button
                     type="button"
                     onClick={() => setAvailableSeats(Math.min(6, availableSeats + 1))}
-                    className="w-9 h-9 rounded-xl bg-[#191e2e] border border-white/[0.08] hover:border-white/20 text-white font-bold text-base flex items-center justify-center hover:bg-white/[0.08] transition-all cursor-pointer"
+                    className="w-9 h-9 rounded-xl bg-[#1e2127] border border-white/[0.08] hover:border-white/20 text-white font-bold text-base flex items-center justify-center hover:bg-white/[0.08] transition-all cursor-pointer"
                   >
                     +
                   </button>
@@ -419,7 +415,7 @@ export default function CreateRideModal({
                   <button
                     type="button"
                     onClick={() => setFilledSeats(Math.max(1, filledSeats - 1))}
-                    className="w-9 h-9 rounded-xl bg-[#191e2e] border border-white/[0.08] hover:border-white/20 text-white font-bold text-base flex items-center justify-center hover:bg-white/[0.08] transition-all cursor-pointer"
+                    className="w-9 h-9 rounded-xl bg-[#1e2127] border border-white/[0.08] hover:border-white/20 text-white font-bold text-base flex items-center justify-center hover:bg-white/[0.08] transition-all cursor-pointer"
                     title="Minimum 1 (host is always included)"
                   >
                     -
@@ -430,7 +426,7 @@ export default function CreateRideModal({
                   <button
                     type="button"
                     onClick={() => setFilledSeats(Math.min(6, filledSeats + 1))}
-                    className="w-9 h-9 rounded-xl bg-[#191e2e] border border-white/[0.08] hover:border-white/20 text-white font-bold text-base flex items-center justify-center hover:bg-white/[0.08] transition-all cursor-pointer"
+                    className="w-9 h-9 rounded-xl bg-[#1e2127] border border-white/[0.08] hover:border-white/20 text-white font-bold text-base flex items-center justify-center hover:bg-white/[0.08] transition-all cursor-pointer"
                   >
                     +
                   </button>
@@ -452,12 +448,12 @@ export default function CreateRideModal({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="e.g. Leaving sharply at 7:15, splitting auto fare equally, carrying printouts..."
-              className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl p-3 text-xs text-white placeholder-gray-500 outline-none resize-none transition-all"
+              className="w-full bg-[#101216] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl p-3 text-xs text-white placeholder-gray-500 outline-none resize-none transition-all"
             />
           </div>
 
           {/* Sticky Actions Footer */}
-          <div className="pt-3 flex items-center justify-end gap-3 border-t border-white/[0.08] sticky bottom-0 bg-[#121522] pb-1">
+          <div className="pt-3 flex items-center justify-end gap-3 border-t border-white/[0.08] sticky bottom-0 bg-[#16181d] pb-1">
             <button
               type="button"
               onClick={onClose}
@@ -467,7 +463,7 @@ export default function CreateRideModal({
             </button>
             <button
               type="submit"
-              className="btn-primary text-xs py-2.5 px-6 shadow-lg"
+              className="btn-primary text-xs py-2.5 px-6 shadow-md"
             >
               {isEditing ? 'Save Changes' : 'Publish Ride'}
             </button>

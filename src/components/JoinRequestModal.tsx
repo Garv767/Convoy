@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ArrowRight, ShieldCheck, MapPin, Users } from 'lucide-react';
+import { X, ArrowRight, ShieldCheck } from 'lucide-react';
 import { RideListing, UserProfile } from '../types';
 import TransportBadge from './TransportBadge';
 
@@ -32,9 +32,9 @@ export default function JoinRequestModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/80 backdrop-blur-md">
-      <div className="w-full sm:max-w-md bg-[#121522] border-t sm:border border-white/[0.12] rounded-t-3xl sm:rounded-3xl p-6 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.85)] relative overflow-hidden">
-        {/* Top subtle gradient highlight line */}
-        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-[#1E88E5] to-[#8b5cf6]" />
+      <div className="w-full sm:max-w-md bg-[#16181d] border-t sm:border border-white/[0.12] rounded-t-3xl sm:rounded-3xl p-6 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.85)] relative overflow-hidden">
+        {/* Top blue highlight line */}
+        <div className="absolute top-0 inset-x-0 h-[2px] bg-[#1E88E5]" />
 
         {/* Modal Header */}
         <div className="flex items-center justify-between pb-3.5 border-b border-white/[0.08] mb-4">
@@ -50,7 +50,7 @@ export default function JoinRequestModal({
         </div>
 
         {/* Ride Snapshot Inset */}
-        <div className="p-3.5 rounded-2xl bg-[#0c0e17] border border-white/[0.08] mb-4 space-y-2">
+        <div className="p-3.5 rounded-2xl bg-[#101216] border border-white/[0.08] mb-4 space-y-2">
           <div className="flex items-center justify-between">
             <TransportBadge mode={ride.transport_mode} vehicleType={ride.vehicle_type} size="sm" />
             <span className="text-xs font-semibold text-[#60a5fa] font-mono">
@@ -60,7 +60,7 @@ export default function JoinRequestModal({
           <div className="flex items-center gap-2 text-xs font-semibold text-white pt-1">
             <span className="truncate">{ride.origin}</span>
             <ArrowRight className="w-3.5 h-3.5 text-gray-500 shrink-0" />
-            <span className="truncate text-[#c084fc]">{ride.destination}</span>
+            <span className="truncate text-gray-200">{ride.destination}</span>
           </div>
         </div>
 
@@ -73,7 +73,7 @@ export default function JoinRequestModal({
             <select
               value={seats}
               onChange={(e) => setSeats(Number(e.target.value))}
-              className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none transition-all cursor-pointer"
+              className="w-full bg-[#101216] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none transition-all cursor-pointer"
             >
               {Array.from({ length: Math.min(ride.available_seats, 4) }, (_, i) => i + 1).map((n) => (
                 <option key={n} value={n}>
@@ -94,7 +94,7 @@ export default function JoinRequestModal({
               onChange={(e) => setLandmark(e.target.value)}
               placeholder="e.g. SRM Arch Gate, Estancia Tower 4..."
               required
-              className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
+              className="w-full bg-[#101216] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
             />
           </div>
 
@@ -108,7 +108,7 @@ export default function JoinRequestModal({
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="e.g. Carrying small backpack, ready by 7:10 AM"
-              className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
+              className="w-full bg-[#101216] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
             />
           </div>
 
@@ -128,7 +128,7 @@ export default function JoinRequestModal({
             </button>
             <button
               type="submit"
-              className="btn-primary text-xs py-2.5 px-6 shadow-lg"
+              className="btn-primary text-xs py-2.5 px-6 shadow-md"
             >
               Send Request
             </button>

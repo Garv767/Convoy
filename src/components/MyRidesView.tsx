@@ -8,9 +8,6 @@ import {
   ArrowRight,
   Plus,
   Edit3,
-  Users,
-  MapPin,
-  Sparkles,
 } from 'lucide-react';
 import { RideListing, RideRequest, UserProfile } from '../types';
 import TransportBadge from './TransportBadge';
@@ -52,14 +49,14 @@ export default function MyRidesView({
   return (
     <div className="space-y-7 sm:space-y-9">
       {/* Student Profile Card (Unfugly design style) */}
-      <div className="relative rounded-3xl bg-[#121522]/90 backdrop-blur-xl border border-white/[0.08] p-5 sm:p-6 shadow-xl overflow-hidden">
-        {/* Top subtle highlight gradient */}
-        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-[#1E88E5] via-[#8b5cf6] to-[#10b981]" />
+      <div className="relative rounded-3xl bg-[#16181d] border border-white/[0.08] p-5 sm:p-6 shadow-xl overflow-hidden">
+        {/* Top Unfugly blue highlight line */}
+        <div className="absolute top-0 inset-x-0 h-[2px] bg-[#1E88E5]" />
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             {/* Circular Profile Avatar */}
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-[#1E88E5] bg-gradient-to-br from-[#1E88E5]/30 to-[#8b5cf6]/20 text-white font-black text-xl sm:text-2xl flex items-center justify-center shrink-0 shadow-[0_0_24px_rgba(30,136,229,0.35)]">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-[#1E88E5] bg-[#1E88E5]/20 text-white font-black text-xl sm:text-2xl flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(30,136,229,0.3)]">
               {currentUser.full_name ? currentUser.full_name[0].toUpperCase() : 'U'}
             </div>
 
@@ -68,7 +65,7 @@ export default function MyRidesView({
                 <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
                   {currentUser.full_name}
                 </h2>
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-0.5 rounded-full shadow-[0_0_12px_rgba(16,185,129,0.15)]">
+                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-0.5 rounded-full">
                   <ShieldCheck className="w-3.5 h-3.5" />
                   Verified SRM Student
                 </span>
@@ -96,7 +93,7 @@ export default function MyRidesView({
           {onEditProfile && (
             <button
               onClick={onEditProfile}
-              className="btn-secondary text-xs py-2 px-4 gap-1.5 flex items-center self-start sm:self-auto shrink-0 shadow-md cursor-pointer"
+              className="btn-secondary text-xs py-2 px-4 gap-1.5 flex items-center self-start sm:self-auto shrink-0 shadow-sm cursor-pointer"
             >
               <Edit3 className="w-3.5 h-3.5 text-[#1E88E5]" />
               <span>Edit Profile</span>
@@ -113,7 +110,7 @@ export default function MyRidesView({
               Incoming Passenger Requests
             </h2>
             {incomingRequests.length > 0 && (
-              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#1E88E5] text-white shadow-[0_0_12px_rgba(30,136,229,0.4)]">
+              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#1E88E5] text-white shadow-sm">
                 {incomingRequests.length}
               </span>
             )}
@@ -121,7 +118,7 @@ export default function MyRidesView({
         </div>
 
         {incomingRequests.length === 0 ? (
-          <div className="p-8 text-center rounded-2xl bg-[#121522]/60 border border-white/[0.06] text-gray-400 text-xs">
+          <div className="p-8 text-center rounded-2xl bg-[#16181d] border border-white/[0.06] text-gray-400 text-xs">
             No incoming passenger requests at the moment.
           </div>
         ) : (
@@ -131,13 +128,13 @@ export default function MyRidesView({
               return (
                 <div
                   key={req.id}
-                  className="rounded-2xl bg-[#121522]/90 backdrop-blur-xl border border-white/[0.08] hover:border-[#1E88E5]/30 p-5 shadow-lg flex flex-col justify-between transition-all"
+                  className="rounded-2xl bg-[#16181d] border border-white/[0.08] hover:border-[#1E88E5]/30 p-5 shadow-lg flex flex-col justify-between transition-all"
                 >
                   <div>
                     {/* Header: Passenger Identity */}
                     <div className="flex items-start justify-between gap-2 mb-3">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#1E88E5]/30 to-[#8b5cf6]/20 border border-[#1E88E5]/40 flex items-center justify-center text-xs font-bold text-white">
+                        <div className="w-9 h-9 rounded-full bg-[#1E88E5]/20 border border-[#1E88E5]/40 flex items-center justify-center text-xs font-bold text-white">
                           {req.passenger_name ? req.passenger_name[0].toUpperCase() : 'P'}
                         </div>
                         <div>
@@ -169,7 +166,7 @@ export default function MyRidesView({
 
                     {/* Ride Context Inset */}
                     {targetRide && (
-                      <div className="p-3 rounded-xl bg-[#0c0e17] border border-white/[0.06] text-xs mb-3 space-y-1">
+                      <div className="p-3 rounded-xl bg-[#101216] border border-white/[0.06] text-xs mb-3 space-y-1">
                         <div className="flex items-center justify-between text-gray-400">
                           <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">Route:</span>
                           <span className="text-white font-semibold">
@@ -210,7 +207,7 @@ export default function MyRidesView({
                         </button>
                         <button
                           onClick={() => onAcceptRequest(req.id)}
-                          className="py-2 px-3 rounded-full bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] cursor-pointer"
+                          className="py-2 px-3 rounded-full bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-sm cursor-pointer"
                         >
                           <CheckCircle className="w-3.5 h-3.5" />
                           Accept & Unlock
@@ -265,7 +262,7 @@ export default function MyRidesView({
         </div>
 
         {outgoingRequests.length === 0 ? (
-          <div className="p-8 text-center rounded-2xl bg-[#121522]/60 border border-white/[0.06] text-gray-400 text-xs">
+          <div className="p-8 text-center rounded-2xl bg-[#16181d] border border-white/[0.06] text-gray-400 text-xs">
             You haven't requested to join any rides yet.
           </div>
         ) : (
@@ -273,7 +270,7 @@ export default function MyRidesView({
             {outgoingRequests.map((req) => {
               const targetRide = rides.find((r) => r.id === req.ride_id);
               return (
-                <div key={req.id} className="rounded-2xl bg-[#121522]/90 backdrop-blur-xl border border-white/[0.08] p-5 shadow-lg">
+                <div key={req.id} className="rounded-2xl bg-[#16181d] border border-white/[0.08] p-5 shadow-lg">
                   <div className="flex items-start justify-between gap-2 mb-3">
                     <div>
                       <p className="text-sm font-bold text-white">
@@ -339,7 +336,7 @@ export default function MyRidesView({
           </div>
           <button
             onClick={onOpenCreateModal}
-            className="btn-secondary text-xs py-1.5 px-3.5 gap-1.5 flex items-center shadow-md cursor-pointer"
+            className="btn-secondary text-xs py-1.5 px-3.5 gap-1.5 flex items-center shadow-sm cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5 text-[#1E88E5]" />
             <span>Post Ride</span>
@@ -347,13 +344,13 @@ export default function MyRidesView({
         </div>
 
         {hostedRides.length === 0 ? (
-          <div className="p-8 text-center rounded-2xl bg-[#121522]/60 border border-white/[0.06] text-gray-400 text-xs">
+          <div className="p-8 text-center rounded-2xl bg-[#16181d] border border-white/[0.06] text-gray-400 text-xs">
             You haven't posted any rides yet.
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {hostedRides.map((ride) => (
-              <div key={ride.id} className="rounded-2xl bg-[#121522]/90 backdrop-blur-xl border border-white/[0.08] p-5 shadow-lg flex flex-col justify-between">
+              <div key={ride.id} className="rounded-2xl bg-[#16181d] border border-white/[0.08] p-5 shadow-lg flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <TransportBadge mode={ride.transport_mode} vehicleType={ride.vehicle_type} size="sm" />
@@ -364,7 +361,7 @@ export default function MyRidesView({
                   <div className="flex items-center gap-2 text-sm font-bold text-white mb-2">
                     <span className="truncate">{ride.origin}</span>
                     <ArrowRight className="w-3.5 h-3.5 text-gray-500 shrink-0" />
-                    <span className="truncate text-[#c084fc]">{ride.destination}</span>
+                    <span className="truncate text-gray-200">{ride.destination}</span>
                   </div>
                   <div className="text-xs text-gray-400 flex items-center justify-between">
                     <span>{ride.departure_time} · {ride.departure_date}</span>

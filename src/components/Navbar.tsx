@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { GraduationCap, Users, Plus, LogIn, LogOut, Sparkles } from 'lucide-react';
+import { GraduationCap, Users, Plus, LogIn, LogOut } from 'lucide-react';
 import { UserProfile } from '../types';
 
 interface NavbarProps {
@@ -27,12 +27,12 @@ export default function Navbar({
   return (
     <>
       {/* Top Navigation Bar */}
-      <header className="sticky top-0 z-40 bg-[#090b11]/80 backdrop-blur-2xl border-b border-white/[0.08]">
+      <header className="sticky top-0 z-40 bg-[#0d0f12]/90 backdrop-blur-xl border-b border-white/[0.08]">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16">
             {/* Brand Logo */}
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-[#1E88E5] via-[#6c8ef7] to-[#8b5cf6] p-0.5 shadow-[0_0_20px_rgba(30,136,229,0.35)] flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-[#1E88E5] to-[#1565C0] p-0.5 shadow-[0_0_15px_rgba(30,136,229,0.3)] flex items-center justify-center shrink-0">
                 <svg viewBox="0 0 64 64" fill="none" className="w-full h-full">
                   <path
                     d="M48 20.5C45.5 15.5 40 12 33 12C21.4 12 12 21.4 12 33C12 44.6 21.4 54 33 54C42 54 49 48 51.5 40"
@@ -55,12 +55,12 @@ export default function Navbar({
             </div>
 
             {/* Desktop Center Navigation Pills */}
-            <nav className="hidden md:flex items-center gap-1 bg-[#121522]/90 border border-white/[0.08] p-1 rounded-full shadow-inner">
+            <nav className="hidden md:flex items-center gap-1 bg-[#16181d] border border-white/[0.08] p-1 rounded-full shadow-inner">
               <button
                 onClick={() => setActiveTab('exam')}
                 className={`flex items-center gap-2 px-5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer ${
                   isRidesActive
-                    ? 'bg-gradient-to-r from-[#1E88E5] to-[#3b82f6] text-white shadow-[0_0_20px_rgba(30,136,229,0.4)]'
+                    ? 'bg-[#1E88E5] text-white shadow-sm'
                     : 'text-gray-400 hover:text-white hover:bg-white/[0.05]'
                 }`}
               >
@@ -71,7 +71,7 @@ export default function Navbar({
                 onClick={() => setActiveTab('my-rides')}
                 className={`flex items-center gap-2 px-5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 relative cursor-pointer ${
                   activeTab === 'my-rides'
-                    ? 'bg-gradient-to-r from-[#8b5cf6] to-[#a78bfa] text-white shadow-[0_0_20px_rgba(139,92,246,0.4)]'
+                    ? 'bg-[#242730] text-white border border-white/[0.1] shadow-sm'
                     : 'text-gray-400 hover:text-white hover:bg-white/[0.05]'
                 }`}
               >
@@ -87,7 +87,7 @@ export default function Navbar({
             <div className="flex items-center gap-2.5 sm:gap-3">
               <button
                 onClick={onOpenCreateModal}
-                className="btn-primary text-xs py-2 px-4 gap-1.5 shrink-0 shadow-lg"
+                className="btn-primary text-xs py-2 px-4 gap-1.5 shrink-0 shadow-md"
               >
                 <Plus className="w-4 h-4" />
                 <span>Post Ride</span>
@@ -101,7 +101,7 @@ export default function Navbar({
                     className="flex items-center gap-2 p-1 rounded-full hover:bg-white/[0.05] text-left transition-colors group cursor-pointer"
                   >
                     {/* Unfugly avatar circle style */}
-                    <div className="w-8 h-8 rounded-full border-2 border-[#1E88E5] bg-gradient-to-br from-[#1E88E5]/30 to-[#8b5cf6]/20 flex items-center justify-center text-white font-bold text-xs shadow-[0_0_12px_rgba(30,136,229,0.3)] transition-transform group-hover:scale-105 shrink-0">
+                    <div className="w-8 h-8 rounded-full border-2 border-[#1E88E5] bg-[#1E88E5]/20 flex items-center justify-center text-white font-bold text-xs shadow-sm transition-transform group-hover:scale-105 shrink-0">
                       {user.full_name ? user.full_name[0].toUpperCase() : 'U'}
                     </div>
                     <div className="hidden lg:flex flex-col text-left pr-1">
@@ -124,7 +124,7 @@ export default function Navbar({
               ) : (
                 <Link
                   href="/login"
-                  className="btn-secondary text-xs py-2 px-4 gap-1.5 flex items-center shadow-md"
+                  className="btn-secondary text-xs py-2 px-4 gap-1.5 flex items-center shadow-sm"
                 >
                   <LogIn className="w-3.5 h-3.5 text-[#1E88E5]" />
                   <span>Sign In</span>
@@ -136,12 +136,12 @@ export default function Navbar({
       </header>
 
       {/* Mobile Fixed Bottom Navigation Bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#090b11]/90 backdrop-blur-2xl border-t border-white/[0.08] px-4 py-2">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0d0f12]/95 backdrop-blur-2xl border-t border-white/[0.08] px-4 py-2">
         <div className="flex items-center justify-around max-w-sm mx-auto">
           <button
             onClick={() => setActiveTab('exam')}
             className={`flex flex-col items-center py-1 px-5 rounded-2xl transition-all ${
-              isRidesActive ? 'text-[#60a5fa] font-bold' : 'text-gray-400'
+              isRidesActive ? 'text-[#1E88E5] font-bold' : 'text-gray-400'
             }`}
           >
             <GraduationCap className={`w-5 h-5 mb-0.5 ${isRidesActive ? 'stroke-[2.5]' : 'stroke-[1.75]'}`} />
@@ -151,7 +151,7 @@ export default function Navbar({
           <button
             onClick={() => setActiveTab('my-rides')}
             className={`flex flex-col items-center py-1 px-5 rounded-2xl transition-all relative ${
-              activeTab === 'my-rides' ? 'text-[#a78bfa] font-bold' : 'text-gray-400'
+              activeTab === 'my-rides' ? 'text-white font-bold' : 'text-gray-400'
             }`}
           >
             <Users className={`w-5 h-5 mb-0.5 ${activeTab === 'my-rides' ? 'stroke-[2.5]' : 'stroke-[1.75]'}`} />

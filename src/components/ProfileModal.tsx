@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, ArrowRight, X, User, Sparkles } from 'lucide-react';
+import { ShieldCheck, ArrowRight, X } from 'lucide-react';
 import { UserProfile, UserGender } from '../types';
 
 interface ProfileModalProps {
@@ -64,9 +64,9 @@ export default function ProfileModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/80 backdrop-blur-md">
-      <div className="w-full sm:max-w-md bg-[#121522] border-t sm:border border-white/[0.12] rounded-t-3xl sm:rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.85)] p-6 max-h-[92vh] overflow-y-auto relative">
-        {/* Top subtle gradient highlight line */}
-        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-[#1E88E5] via-[#8b5cf6] to-[#10b981]" />
+      <div className="w-full sm:max-w-md bg-[#16181d] border-t sm:border border-white/[0.12] rounded-t-3xl sm:rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.85)] p-6 max-h-[92vh] overflow-y-auto relative">
+        {/* Top blue highlight line */}
+        <div className="absolute top-0 inset-x-0 h-[2px] bg-[#1E88E5]" />
 
         {onClose && (
           <button
@@ -77,9 +77,9 @@ export default function ProfileModal({
           </button>
         )}
 
-        {/* Profile Header Avatar (Unfugly design style) */}
+        {/* Profile Header Avatar */}
         <div className="text-center mb-5">
-          <div className="w-14 h-14 rounded-full border-2 border-[#1E88E5] bg-gradient-to-br from-[#1E88E5]/30 to-[#8b5cf6]/20 mx-auto flex items-center justify-center text-white font-extrabold text-xl shadow-[0_0_20px_rgba(30,136,229,0.3)] mb-3">
+          <div className="w-14 h-14 rounded-full border-2 border-[#1E88E5] bg-[#1E88E5]/20 mx-auto flex items-center justify-center text-white font-extrabold text-xl shadow-[0_0_15px_rgba(30,136,229,0.25)] mb-3">
             {fullName ? fullName[0].toUpperCase() : 'S'}
           </div>
           <div className="flex items-center justify-center gap-1.5">
@@ -104,7 +104,7 @@ export default function ProfileModal({
               onChange={(e) => setFullName(e.target.value)}
               placeholder="e.g. Garv Rahut"
               required
-              className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
+              className="w-full bg-[#101216] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
             />
           </div>
 
@@ -119,7 +119,7 @@ export default function ProfileModal({
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 placeholder="+91 9876543210"
                 required
-                className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all font-mono"
+                className="w-full bg-[#101216] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all font-mono"
               />
             </div>
             <div>
@@ -131,7 +131,7 @@ export default function ProfileModal({
                 value={whatsappNumber}
                 onChange={(e) => setWhatsappNumber(e.target.value)}
                 placeholder="Same as phone"
-                className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all font-mono"
+                className="w-full bg-[#101216] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all font-mono"
               />
             </div>
           </div>
@@ -146,8 +146,8 @@ export default function ProfileModal({
                 onClick={() => setGender('male')}
                 className={`py-2 px-2 rounded-xl text-xs font-semibold border text-center transition-all cursor-pointer ${
                   gender === 'male'
-                    ? 'border-[#1E88E5] bg-[#1E88E5]/20 text-[#60a5fa] shadow-[0_0_12px_rgba(30,136,229,0.25)]'
-                    : 'border-white/[0.08] bg-[#0c0e17] text-gray-400 hover:text-white'
+                    ? 'border-[#1E88E5] bg-[#1E88E5]/20 text-[#60a5fa] shadow-sm'
+                    : 'border-white/[0.08] bg-[#101216] text-gray-400 hover:text-white'
                 }`}
               >
                 Male
@@ -157,8 +157,8 @@ export default function ProfileModal({
                 onClick={() => setGender('female')}
                 className={`py-2 px-2 rounded-xl text-xs font-semibold border text-center transition-all cursor-pointer ${
                   gender === 'female'
-                    ? 'border-[#8b5cf6] bg-[#8b5cf6]/20 text-[#c084fc] shadow-[0_0_12px_rgba(139,92,246,0.25)]'
-                    : 'border-white/[0.08] bg-[#0c0e17] text-gray-400 hover:text-white'
+                    ? 'border-rose-400/50 bg-rose-500/20 text-rose-300 shadow-sm'
+                    : 'border-white/[0.08] bg-[#101216] text-gray-400 hover:text-white'
                 }`}
               >
                 Female
@@ -168,8 +168,8 @@ export default function ProfileModal({
                 onClick={() => setGender('other')}
                 className={`py-2 px-2 rounded-xl text-xs font-semibold border text-center transition-all cursor-pointer ${
                   gender === 'other'
-                    ? 'border-emerald-500 bg-emerald-500/20 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.25)]'
-                    : 'border-white/[0.08] bg-[#0c0e17] text-gray-400 hover:text-white'
+                    ? 'border-emerald-500 bg-emerald-500/20 text-emerald-300 shadow-sm'
+                    : 'border-white/[0.08] bg-[#101216] text-gray-400 hover:text-white'
                 }`}
               >
                 Other
@@ -188,7 +188,7 @@ export default function ProfileModal({
                 onChange={(e) => setDepartment(e.target.value)}
                 placeholder="e.g. B.Tech CSE"
                 required
-                className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
+                className="w-full bg-[#101216] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 outline-none transition-all"
               />
             </div>
             <div>
@@ -198,7 +198,7 @@ export default function ProfileModal({
               <select
                 value={yearOfStudy}
                 onChange={(e) => setYearOfStudy(Number(e.target.value))}
-                className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none transition-all cursor-pointer"
+                className="w-full bg-[#101216] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none transition-all cursor-pointer"
               >
                 <option value={1}>1st Year</option>
                 <option value={2}>2nd Year</option>
@@ -217,7 +217,7 @@ export default function ProfileModal({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="btn-primary w-full text-xs py-3 flex items-center justify-center gap-2 mt-2 shadow-lg"
+            className="btn-primary w-full text-xs py-3 flex items-center justify-center gap-2 mt-2 shadow-md"
           >
             <span>{isSubmitting ? 'Saving...' : isEditing ? 'Save Changes' : 'Complete Setup & Continue'}</span>
             <ArrowRight className="w-4 h-4" />

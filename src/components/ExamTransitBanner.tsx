@@ -1,5 +1,5 @@
 import React from 'react';
-import { GraduationCap, Search, Plus, Sparkles, MapPin } from 'lucide-react';
+import { GraduationCap, Search, Plus, Sparkles } from 'lucide-react';
 import { ExamSession } from '../types';
 
 interface ExamTransitBannerProps {
@@ -18,15 +18,15 @@ export default function ExamTransitBanner({
   onPostExamRide,
 }: ExamTransitBannerProps) {
   return (
-    <div className="relative mb-6 rounded-2xl sm:rounded-3xl bg-[#121522]/90 backdrop-blur-xl border border-white/[0.08] shadow-xl overflow-hidden">
-      {/* Top Gradient Highlight Accent Line */}
-      <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-[#1E88E5] via-[#8b5cf6] to-[#10b981]" />
+    <div className="relative mb-6 rounded-2xl sm:rounded-3xl bg-[#16181d] border border-white/[0.08] shadow-xl overflow-hidden">
+      {/* Top Unfugly Blue Accent Line */}
+      <div className="absolute top-0 inset-x-0 h-[2px] bg-[#1E88E5]" />
 
       <div className="p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
           <div className="flex items-start sm:items-center gap-3">
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br from-[#8b5cf6]/20 to-[#1E88E5]/20 border border-[#8b5cf6]/30 text-[#a78bfa] flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(139,92,246,0.15)]">
-              <GraduationCap className="w-5 h-5 text-[#a78bfa]" />
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#1E88E5]/10 border border-[#1E88E5]/25 text-[#1E88E5] flex items-center justify-center shrink-0">
+              <GraduationCap className="w-5 h-5 text-[#1E88E5]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -46,7 +46,7 @@ export default function ExamTransitBanner({
 
           <button
             onClick={onPostExamRide}
-            className="btn-primary self-start sm:self-auto text-xs py-2 px-4 gap-1.5 shrink-0 shadow-lg"
+            className="btn-primary self-start sm:self-auto text-xs py-2 px-4 gap-1.5 shrink-0 shadow-md"
           >
             <Plus className="w-4 h-4" />
             <span>Post Ride</span>
@@ -56,12 +56,12 @@ export default function ExamTransitBanner({
         {/* Filter Controls Row */}
         <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-3 border-t border-white/[0.06]">
           {/* Shift Segmented Toggle */}
-          <div className="sm:col-span-5 flex items-center gap-1 bg-[#0c0e17] p-1 rounded-xl border border-white/[0.08]">
+          <div className="sm:col-span-5 flex items-center gap-1 bg-[#101216] p-1 rounded-xl border border-white/[0.08]">
             <button
               onClick={() => setSelectedSession('all')}
-              className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold transition-all ${
+              className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 selectedSession === 'all'
-                  ? 'bg-[#1E88E5] text-white shadow-[0_0_15px_rgba(30,136,229,0.35)]'
+                  ? 'bg-[#1E88E5] text-white shadow-sm'
                   : 'text-gray-400 hover:text-white hover:bg-white/[0.04]'
               }`}
             >
@@ -69,9 +69,9 @@ export default function ExamTransitBanner({
             </button>
             <button
               onClick={() => setSelectedSession('FN')}
-              className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold transition-all ${
+              className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 selectedSession === 'FN'
-                  ? 'bg-[#8b5cf6] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
+                  ? 'bg-[#1E88E5] text-white shadow-sm'
                   : 'text-gray-400 hover:text-white hover:bg-white/[0.04]'
               }`}
             >
@@ -79,9 +79,9 @@ export default function ExamTransitBanner({
             </button>
             <button
               onClick={() => setSelectedSession('AN')}
-              className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold transition-all ${
+              className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 selectedSession === 'AN'
-                  ? 'bg-[#8b5cf6] text-white shadow-[0_0_15px_rgba(139,92,246,0.35)]'
+                  ? 'bg-[#1E88E5] text-white shadow-sm'
                   : 'text-gray-400 hover:text-white hover:bg-white/[0.04]'
               }`}
             >
@@ -99,12 +99,12 @@ export default function ExamTransitBanner({
               value={venueSearch}
               onChange={(e) => setVenueSearch(e.target.value)}
               placeholder="Search center (e.g. SRM Tech Park, Chengalpattu, Ambattur)..."
-              className="w-full bg-[#0c0e17] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl pl-9 pr-14 text-xs py-2.5 text-white placeholder-gray-500 transition-all outline-none"
+              className="w-full bg-[#101216] border border-white/[0.08] focus:border-[#1E88E5] focus:ring-2 focus:ring-[#1E88E5]/20 rounded-xl pl-9 pr-14 text-xs py-2.5 text-white placeholder-gray-500 transition-all outline-none"
             />
             {venueSearch && (
               <button
                 onClick={() => setVenueSearch('')}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-xs text-gray-400 hover:text-white font-medium"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-xs text-gray-400 hover:text-white font-medium cursor-pointer"
               >
                 Clear
               </button>
