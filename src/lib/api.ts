@@ -331,14 +331,35 @@ export async function fetchOutgoingRequests(passengerId: string): Promise<RideRe
 
 /**
  * Update request status (Accept / Reject) and decrement seats on accept.
+ * Tries the atomic RPC accept_ride_request / reject_ride_request first.
+ * Falls back to client-side updates with strict error checking.
  */
 export async function updateRequestStatus(
   requestId: string,
   rideId: string,
   status: 'accepted' | 'rejected',
-  seatsRequested: number
-): Promise<{ success: boolean; error: string | null }> {
+  seatsRequested?: number
+): Promise<{ success: boolean; available_seats?: number; error: string | null }> {
   try {
+    // 1. Attempt atomic RPC if available
+    const rpcName = status === 'accepted' ? 'accept_ride_request' : 'reject_ride_request';
+    const { data: rpcData, error: rpcError } = await supabase.rpc(rpcName, {
+      p_request_id: requestId,
+    });
+
+    if (!rpcError && rpcData) {
+      if (rpcData.success) {
+        return {
+          success: true,
+          available_seats: rpcData.available_seats,
+          error: null,
+        };
+      } else {
+        return { success: false, error: rpcData.error || 'Failed to update request' };
+      }
+    }
+
+    // 2. Client-side fallback if RPC is not installed or errors
     const { error: reqError } = await supabase
       .from('commute_requests')
       .update({ status, updated_at: new Date().toISOString() })
@@ -346,21 +367,56 @@ export async function updateRequestStatus(
 
     if (reqError) return { success: false, error: reqError.message };
 
+    const seatsToDeduct = Math.max(1, Number(seatsRequested) || 1);
+
     if (status === 'accepted') {
       // Decrement available seats
-      const { data: ride } = await supabase
+      const { data: ride, error: rideFetchErr } = await supabase
         .from('commute_rides')
         .select('available_seats')
         .eq('id', rideId)
         .single();
 
-      if (ride) {
-        const newSeats = Math.max(0, ride.available_seats - seatsRequested);
-        await supabase
+      if (rideFetchErr) {
+        console.warn('Could not fetch ride for seat update:', rideFetchErr.message);
+      } else if (ride) {
+        const currentSeats = typeof ride.available_seats === 'number' ? ride.available_seats : 0;
+        const newSeats = Math.max(0, currentSeats - seatsToDeduct);
+
+        const { error: rideUpdateErr } = await supabase
           .from('commute_rides')
           .update({
             available_seats: newSeats,
             status: newSeats === 0 ? 'full' : 'active',
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', rideId);
+
+        if (rideUpdateErr) {
+          console.error('Failed to decrement available seats:', rideUpdateErr.message);
+          return { success: false, error: rideUpdateErr.message };
+        }
+
+        return { success: true, available_seats: newSeats, error: null };
+      }
+    } else if (status === 'rejected') {
+      // If declining an accepted request, restore seats
+      const { data: ride } = await supabase
+        .from('commute_rides')
+        .select('available_seats, total_seats')
+        .eq('id', rideId)
+        .single();
+
+      if (ride) {
+        const restoredSeats = Math.min(
+          ride.total_seats || 4,
+          (ride.available_seats ?? 0) + seatsToDeduct
+        );
+        await supabase
+          .from('commute_rides')
+          .update({
+            available_seats: restoredSeats,
+            status: 'active',
             updated_at: new Date().toISOString(),
           })
           .eq('id', rideId);

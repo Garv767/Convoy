@@ -13,6 +13,7 @@ import ProfileModal from '../components/ProfileModal';
 import {
   RideListing,
   RideRequest,
+  RequestStatus,
   UserProfile,
   TransportMode,
   GenderPreference,
@@ -255,6 +256,27 @@ export default function Home() {
     const req = requests.find((r) => r.id === requestId);
     if (!req) return;
 
+    const seatsToDeduct = Math.max(1, Number(req.seats_requested) || 1);
+
+    // Optimistic UI update: immediately mark accepted and decrement seats locally
+    setRequests((prev) =>
+      prev.map((r) => (r.id === requestId ? { ...r, status: 'accepted' as RequestStatus } : r))
+    );
+    setRides((prev) =>
+      prev.map((r) => {
+        if (r.id === req.ride_id) {
+          const current = typeof r.available_seats === 'number' ? r.available_seats : 0;
+          const nextSeats = Math.max(0, current - seatsToDeduct);
+          return {
+            ...r,
+            available_seats: nextSeats,
+            status: nextSeats === 0 ? 'full' : r.status,
+          };
+        }
+        return r;
+      })
+    );
+
     const res = await updateRequestStatus(
       requestId,
       req.ride_id,
@@ -266,6 +288,8 @@ export default function Home() {
       await Promise.all([loadRequests(), loadRides()]);
     } else {
       alert('Failed to accept request: ' + res.error);
+      // Revert optimistic updates
+      await Promise.all([loadRequests(), loadRides()]);
     }
   };
 
@@ -273,6 +297,11 @@ export default function Home() {
   const handleRejectRequest = async (requestId: string) => {
     const req = requests.find((r) => r.id === requestId);
     if (!req) return;
+
+    // Optimistic UI update
+    setRequests((prev) =>
+      prev.map((r) => (r.id === requestId ? { ...r, status: 'rejected' as RequestStatus } : r))
+    );
 
     const res = await updateRequestStatus(
       requestId,
@@ -282,9 +311,10 @@ export default function Home() {
     );
 
     if (res.success) {
-      loadRequests();
+      await Promise.all([loadRequests(), loadRides()]);
     } else {
       alert('Failed to reject request: ' + res.error);
+      await Promise.all([loadRequests(), loadRides()]);
     }
   };
 
